@@ -1,0 +1,154 @@
+.feature {
+  color: white;
+  position: relative;
+  height: 95vh;
+}
+
+.featureimg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+}
+
+.info {
+  width: 35%;
+  position: absolute;
+  left: 5%;
+  top: 55%;
+}
+
+.videocon {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  z-index: 10000;background-color: black;
+  transform: translate(-50%, -50%);
+}
+
+.close{
+  cursor: pointer;
+  
+}
+
+.infocon {
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 1px solid white;
+  border-radius: 15px;
+  min-width: 20rem;
+  height: fit-content;
+  padding: 1rem;
+  max-width: 50rem;
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.btn {
+  color: white;
+  outline: none;
+  cursor: pointer;
+  border: none;
+  width: 7rem;
+  margin: 2.5rem 0rem;
+  padding: 0.5rem;
+  font-size: large;
+  align-items: center;
+  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.grey {
+  margin-left: 1.5rem;
+}
+
+.btnspan {
+  padding: 0px 8px;
+}
+
+.btn:hover {
+  background-color: white;
+  color: black;
+}
+
+.icon:hover {
+  color: #000000;
+}
+
+.myControlClassName {
+  background-color: black;
+}
+
+.dropdown {
+  top: 15%;
+  position: absolute;
+  left: 5%;
+}
+
+.dropdownselect {
+  color: white;
+  background-color: black;
+  padding: 0.4rem;
+  border: 1px solid white;
+  font-size: medium;
+}
+
+.dropdownoption {
+  padding: 0.4rem;
+}
+
+.imgtitle {
+  font-weight: 800;
+  font-size: 50px;
+  position: absolute;
+  top: -30%;
+}
+
+
+
+/* Styling for Movie Name */
+.movie-name {
+  margin-bottom: 15px;
+  font-size: 24px;
+  color: #fdfdfd;
+}
+
+.movie-name-value {
+  font-weight: 100;
+}
+
+/* Styling for Description */
+.description {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #a9a4a4;
+}
+
+.description-value {
+  font-style: italic;
+}
+
+/* Styling for Genre */
+.genre {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #555;
+}
+
+.genre-value {
+  font-weight: bold;
+  color: #007bff; /* Change color as desired */
+}
+
+/* Styling for Rating */
+.rating {
+  font-size: 16px;
+  color: #555;
+  display: inline;
+}
+
+.rating-value {
+  font-weight: bold;
+  color: #28a745; /* Change color as desired */
+}

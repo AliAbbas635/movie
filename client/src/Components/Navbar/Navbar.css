@@ -1,0 +1,122 @@
+
+.Navbar{
+    color: white;
+    font-family: 'Roboto', sans-serif;
+    top: 0;
+    z-index: 99;
+    background: linear-gradient(to top, transparent 0%, rgba(0,0,0,0.1) 50%);
+    color: white;
+    font-size: 14px;
+    position: fixed;
+    width: 100%;
+}
+
+.container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+}
+
+.left{
+    display: flex;
+    align-items: center;
+    background: none;
+}
+
+.left > span{
+    padding: 0px 5px;
+    cursor: pointer;
+    background: none;
+}
+
+.logo{
+    height: 40px;
+    padding-right: 4px;
+    cursor: pointer;
+    background: none;
+}
+
+.right{
+    color: white;
+    display: flex;
+    align-items: center;
+    background: none;
+}
+
+.right > img{
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    padding: px 15px;
+    background: none;
+}
+
+.Navicon{
+    padding: 5px 11px;
+    cursor: pointer;
+    background: none;
+}   
+
+
+
+.con {
+    display: flex;
+    flex-direction: column;
+    right: 1rem;
+    top: 3rem;
+    position: absolute;
+    border: 1px solid white;
+    border-radius:4px;
+}
+
+.con > span{
+    padding: 10px;
+    cursor: pointer;
+    background: none;
+    font-size: medium;
+}
+
+.con > span:hover{
+    background-color: rgba(0,0,0,0.3);
+}
+
+.Scrolled{
+    background-color: black;
+}
+
+.static{
+    position: absolute;
+    top: 35%;
+    left: 10%;
+}
+
+.staticlink{
+    font-size: large;
+}
+
+.search{
+    background-color: rgba(0,0,0,0.3);
+    outline: none;
+    border: 1px solid white;
+    padding: 8px;
+    border-radius: 5px;
+    color: white;
+
+}
+
+.Navicon{
+    font-size: large;
+    margin-right: 1rem;
+}
+
+
+.Navuser{
+    font-size: x-large;
+    background-color: rgb(0, 0, 0);
+    border-radius: 50%;
+    padding: 0.8rem;
+    margin-right: 1.5rem;
+    cursor: pointer;
+}

@@ -1,0 +1,21 @@
+.wraper-search{
+    width: 100%;
+    height: 100%;
+}
+
+.backtohome{
+    text-decoration: none;
+    font-size: large;
+    color: white;
+    padding: 8px;
+    background-color: red;
+    position: absolute;
+    margin: 1rem;
+    z-index: 10000;
+    right: 2%;
+}
+
+.ratinglimit{
+    position: absolute;
+    top: 0%;
+}

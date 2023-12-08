@@ -1,0 +1,49 @@
+.list{
+    width: 100%;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+
+
+.listTitle{
+    color: white;
+    font-size: 20px;
+    font-size: 500;
+    margin-left: 40px;
+}
+
+.listcontainer{
+margin-left: 20px;
+display: flex;
+align-items: center;
+width: max-content;
+margin-top: 10px;
+transform: translateX(0px);
+transition: all 1s ease;
+overflow: hidden;
+}
+
+.slidarrow{
+    color: white;
+    width: 25px;
+    height: 100%;
+    background-color: rgb(37, 37, 37 , 0.5);
+    position: absolute;
+    z-index: 99;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.wrapper{
+    position: relative;
+}
+
+.left{
+    left: 0%;
+}
+
+.right{
+    top: 0%;
+    right: 0%;
+}
