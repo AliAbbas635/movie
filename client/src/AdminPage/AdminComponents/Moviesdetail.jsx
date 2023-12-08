@@ -70,8 +70,9 @@ const Moviesdetail = () => {
               <td>{truncateDescription(movie.desc)}</td>
               <td>{movie.gener}</td>
               <td>{movie.limit}</td>
+              {console.log(movie._id)}
               <td>
-                <button onClick={() => onDelete(user._id)}>Delete</button>
+                <button onClick={() => onDelete(movie._id)}>Delete</button>
               </td>
             </tr>
           ))}
