@@ -6,6 +6,8 @@ import UserRouter from "./Routes/UserRoute.js";
 import MovieRouter from "./Routes/MovieRoute.js"
 import cookieParser from "cookie-parser";
 import multer from "multer";
+import path from "path";
+
 
 dotenv.config({path:"./config.env"});
 

@@ -4,9 +4,12 @@ import "./UploadMovie.css";
 import { MyContext } from "../ContextApi/MyContext";
 import { useContext } from "react";
 import { Link } from "react-router-dom";
-const UploadMovie = () => {
-  const { user } = useContext(MyContext);
+import BaseURL from "../BaseURL";
 
+const UploadMovie = () => {
+
+
+  const { user } = useContext(MyContext);
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -49,7 +52,7 @@ const UploadMovie = () => {
       }
 
       const response = await axios.post(
-        "http://localhost:5000/movie/upload",
+        `${BaseURL}/movie/upload`,
         formData,
         {
           headers: {
@@ -71,7 +74,6 @@ const UploadMovie = () => {
     <>
       {user && user.MyProfile && user.MyProfile.isAdmin ? (
         <div className="upload-page">
-
           <Link to={"/dashboard"} className="left-btn">
             Dashboard
           </Link>

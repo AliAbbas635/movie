@@ -4,6 +4,7 @@ import { useContext } from "react";
 import "./User.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import BaseURL from "../../BaseURL";
 
 const User = () => {
   const { alluser, FetchAllUsers,user } = useContext(MyContext);
@@ -13,7 +14,7 @@ const User = () => {
 
   async function onDelete(id) {
     const response = await axios
-      .delete(`http://localhost:5000/user/${id}`, {
+      .delete(`${BaseURL}/user/${id}`, {
         withCredentials: true,
       })
       .then((res) => {

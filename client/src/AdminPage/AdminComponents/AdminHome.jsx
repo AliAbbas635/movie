@@ -18,6 +18,7 @@ import {
 } from "recharts";
 import { MyContext } from "../../ContextApi/MyContext";
 import { useContext } from "react";
+import BaseURL from "../../BaseURL.js"
 
 function AdminHome() {
   const [data, setdata] = useState();
@@ -25,7 +26,7 @@ function AdminHome() {
   useEffect(() => {
     async function stats() {
       try {
-        const response = await axios.get("http://localhost:5000/user/stats", {
+        const response = await axios.get(`${BaseURL}/user/stats`, {
           withCredentials: true,
         });
         if (response.status === 200) {

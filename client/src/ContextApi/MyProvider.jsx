@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MyContext } from "./MyContext.jsx";
 import axios from "axios";
+import BaseURL from "../BaseURL.js";
 
 function MyProvider({ children }) {
   const [user, setUser] = useState("");
@@ -15,7 +16,7 @@ function MyProvider({ children }) {
   async function FetchData(name, email, password) {
     try {
       const response = await axios.post(
-        "http://localhost:5000/user/register",
+        `${BaseURL}/user/register`,
         { name, email, password },
         { withCredentials: true }
       );
@@ -29,7 +30,7 @@ function MyProvider({ children }) {
 
   async function FetchMyData() {
     try {
-      const response = await axios.get("http://localhost:5000/user/profile", {
+      const response = await axios.get(`${BaseURL}/user/profile`, {
         withCredentials: true,
       });
       if (response.status === 200) {
@@ -42,7 +43,7 @@ function MyProvider({ children }) {
 
   async function FetchAllUsers() {
     try {
-      const response = await axios.get("http://localhost:5000/user", {
+      const response = await axios.get(`${BaseURL}/user`, {
         withCredentials: true,
       });
       if (response.status === 200) {
@@ -55,7 +56,7 @@ function MyProvider({ children }) {
   async function FetchLoginData(email, password) {
     try {
       const response = await axios.post(
-        "http://localhost:5000/user/login",
+        `${BaseURL}/user/login`,
         { email, password },
         { withCredentials: true }
       );
@@ -72,7 +73,7 @@ function MyProvider({ children }) {
 
   async function LogoutUser() {
     try {
-      await axios.get("http://localhost:5000/user/logout", {
+      await axios.get(`${BaseURL}/user/logout`, {
         withCredentials: true,
       });
       setUser("");
@@ -86,7 +87,7 @@ function MyProvider({ children }) {
 
   async function fetchRandomMovie() {
     try {
-      const response = await axios.get("http://localhost:5000/movie/random", {
+      const response = await axios.get(`${BaseURL}/movie/random`, {
         withCredentials: true,
       });
       if (response.status === 200) {
@@ -102,7 +103,7 @@ function MyProvider({ children }) {
 
   async function fetchRandomFifty() {
     try {
-      const response = await axios.get("http://localhost:5000/movie/random50", {
+      const response = await axios.get(`${BaseURL}/movie/random50`, {
         withCredentials: true,
       });
       if (response.status === 200) {
@@ -118,7 +119,7 @@ function MyProvider({ children }) {
 
   async function AllMovie() {
     try {
-      const response = await axios.get("http://localhost:5000/movie", {
+      const response = await axios.get(`${BaseURL}/movie`, {
         withCredentials: true,
       });
       if (response.status === 200) {
@@ -135,7 +136,7 @@ function MyProvider({ children }) {
   async function SearchMov(title) {
     setloading(true);
     try {
-      const response = await axios.get('http://localhost:5000/movie/find', {
+      const response = await axios.get(`${BaseURL}/movie/find`, {
         params: {
           title: title 
         },
