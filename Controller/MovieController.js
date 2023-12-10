@@ -38,14 +38,34 @@ export const UpdateMovie = async (req, res) => {
 };
 
 //DELETE
-
 export const DeleteMovie = async (req, res) => {
   const usr = await User.findById(req.user);
   if (usr.isAdmin) {
-    console.log(req.params.id)
     try {
+      // Retrieve the movie to get blob names
+      const movie = await Movie.findById(req.params.id);
+      if (!movie) {
+        return res.status(404).json("Movie not found");
+      }
+
+      // Delete video blob if it exists
+      if (movie.video) {
+        const videoBlobName = new URL(movie.video).pathname.split('/').pop();
+        const blockBlobClientVideo = containerClient.getBlockBlobClient(videoBlobName);
+        await blockBlobClientVideo.delete();
+      }
+
+      // Delete image blob if it exists
+      if (movie.image) {
+        const imageBlobName = new URL(movie.image).pathname.split('/').pop();
+        const blockBlobClientImage = containerClient.getBlockBlobClient(imageBlobName);
+        await blockBlobClientImage.delete();
+      }
+
+      // Delete the movie from the database
       await Movie.findByIdAndDelete(req.params.id);
-      res.status(200).json("The movie has been deleted...");
+
+      res.status(200).json("The movie and associated blobs have been deleted...");
     } catch (err) {
       res.status(500).json(err);
     }
@@ -53,6 +73,7 @@ export const DeleteMovie = async (req, res) => {
     res.status(403).json("You are not allowed!");
   }
 };
+
 
 //GET
 

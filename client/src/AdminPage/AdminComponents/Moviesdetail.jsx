@@ -5,6 +5,7 @@ import "./User.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import {toast, ToastContainer} from 'react-toastify'
+import BaseURL from "../../BaseURL"
 
 const Moviesdetail = () => {
   const { AllMovie, allmovie, user } = useContext(MyContext);
@@ -25,7 +26,7 @@ const Moviesdetail = () => {
 
   async function onDelete(id) {
     const response = await axios
-      .delete(`http://localhost:5000/movie/${id}`, {
+      .delete(`${BaseURL}/movie/${id}`, {
         withCredentials: true,
       })
       
