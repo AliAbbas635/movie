@@ -42,6 +42,7 @@ export const UpdateMovie = async (req, res) => {
 export const DeleteMovie = async (req, res) => {
   const usr = await User.findById(req.user);
   if (usr.isAdmin) {
+    console.log(req.params.id)
     try {
       await Movie.findByIdAndDelete(req.params.id);
       res.status(200).json("The movie has been deleted...");

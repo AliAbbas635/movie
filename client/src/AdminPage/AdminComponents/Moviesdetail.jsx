@@ -4,6 +4,7 @@ import { useContext } from "react";
 import "./User.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import {toast, ToastContainer} from 'react-toastify'
 
 const Moviesdetail = () => {
   const { AllMovie, allmovie, user } = useContext(MyContext);
@@ -23,17 +24,17 @@ const Moviesdetail = () => {
   }
 
   async function onDelete(id) {
-    await axios
+    const response = await axios
       .delete(`http://localhost:5000/movie/${id}`, {
         withCredentials: true,
       })
-      .then((res) => {
-        console.log("deleted Successfully");
-        AllMovie();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      
+      if(response.status === 200){
+        toast.success(response.data)
+        AllMovie()
+      }else{
+        console.log(response.data.message )
+      }
   }
 
   return (
@@ -82,6 +83,7 @@ const Moviesdetail = () => {
       ) : (
         <h1>You are not Allowed</h1>
       )}
+      <ToastContainer/>
     </>
   );
 };
