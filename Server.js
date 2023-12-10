@@ -24,7 +24,7 @@ ConnectDb();
 app.use(cookieParser());
 // Middleware
 const corsOptions = {
-    origin: ['http://localhost:3000',''], 
+    origin: ['http://localhost:3000','https://mern-web-app.azurewebsites.net'], 
     credentials: true
 };
 
