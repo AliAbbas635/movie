@@ -38,29 +38,29 @@ export const UpdateMovie = async (req, res) => {
 };
 
 //DELETE
+
 export const DeleteMovie = async (req, res) => {
   const usr = await User.findById(req.user);
   if (usr.isAdmin) {
     try {
-      // Retrieve the movie to get blob names
       const movie = await Movie.findById(req.params.id);
       if (!movie) {
         return res.status(404).json("Movie not found");
       }
 
-      // Delete video blob if it exists
-      if (movie.video) {
-        const videoBlobName = new URL(movie.video).pathname.split('/').pop();
-        const blockBlobClientVideo = containerClient.getBlockBlobClient(videoBlobName);
-        await blockBlobClientVideo.delete();
-      }
+      // Helper function to delete a blob given its filename
+      const deleteBlob = async (filename) => {
+        if (filename) {
+          const blockBlobClient = containerClient.getBlockBlobClient(filename);
+          await blockBlobClient.deleteIfExists(); // Use deleteIfExists to prevent error if blob not found
+        }
+      };
 
-      // Delete image blob if it exists
-      if (movie.image) {
-        const imageBlobName = new URL(movie.image).pathname.split('/').pop();
-        const blockBlobClientImage = containerClient.getBlockBlobClient(imageBlobName);
-        await blockBlobClientImage.delete();
-      }
+      // Extract filenames from URLs and delete blobs
+      const videoFilename = movie.video ? movie.video.split('/').pop() : null;
+      const imageFilename = movie.image ? movie.image.split('/').pop() : null;
+      await deleteBlob(videoFilename);
+      await deleteBlob(imageFilename);
 
       // Delete the movie from the database
       await Movie.findByIdAndDelete(req.params.id);
