@@ -54,7 +54,7 @@ app.listen(process.env.PORT || 5000, ()=>{
 });
 
 app.get("/", (req, res) => {
- res.send("<h1>Working !!!!</h1>");
+ res.send("<h1>Working </h1>");
 });
 
 export default app;
