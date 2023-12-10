@@ -9,7 +9,6 @@ import multer from "multer";
 import { fileURLToPath } from 'url';
 import path from "path";
 
-
 dotenv.config({path:"./config.env"});
 
 const __filename = fileURLToPath(import.meta.url);
@@ -25,7 +24,7 @@ ConnectDb();
 app.use(cookieParser());
 // Middleware
 const corsOptions = {
-    origin: ['http://localhost:3000','https://netflixstreaming.azurewebsites.net'], 
+    origin: ['http://localhost:3000',''], 
     credentials: true
 };
 
