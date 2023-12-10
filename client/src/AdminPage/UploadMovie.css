@@ -1,92 +1,98 @@
 /* Container styling */
 .upload-page {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    text-align: center;
-    background-color: #f8f9fa;
- }
- 
- /* Heading styling */
- .upload-title {
-    color: #333;
-    margin-bottom: 20px;
- }
- 
- /* File input styling */
- .upload-input {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
- }
-
- .para{
-    color:black
- }
- 
-.left-btn{
-   position: absolute;
-   top: 0%;
-   left: 1%;
-   text-decoration: none;
-   color: white;
-   font-size: large;
-   padding: 5px;
-   background-color: red;
-   border-radius: 5px;
-   margin: 2rem;
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+  background-color: #f8f9fa;
 }
 
-.right-btn{
-   position: absolute;
-   top: 0%;
-   right: 1%;
-   text-decoration: none;
-   color: white;
-   font-size: large;
-   padding: 5px;
-   background-color: red;
-   border-radius: 5px;
-   margin: 2rem;
+/* Heading styling */
+.upload-title {
+  color: #333;
+  margin-bottom: 20px;
 }
 
- /* Button styling */
- .upload-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #902929;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: flex;
-    margin: auto;
-    transition: background-color 0.3s ease;
- }
+/* File input styling */
+.upload-input {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
 
- .upload-label{
-    color: black;
-    display: block;
-    margin: 0.5rem;
- }
- 
- /* Disabled button styling */
- .upload-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
- }
- 
- /* Button hover effect */
- .upload-button:hover:enabled {
-    background-color: #ff0000;
- }
- 
- /* Error message styling */
- .upload-error {
-    color: red;
-    margin-top: 20px;
- }
- 
+.para {
+  color: black;
+}
+
+.left-btn {
+  position: absolute;
+  top: 0%;
+  left: 1%;
+  text-decoration: none;
+  color: white;
+  font-size: large;
+  padding: 5px;
+  background-color: red;
+  border-radius: 5px;
+  margin: 2rem;
+}
+
+.right-btn {
+  position: absolute;
+  top: 0%;
+  right: 1%;
+  text-decoration: none;
+  color: white;
+  font-size: large;
+  padding: 5px;
+  background-color: red;
+  border-radius: 5px;
+  margin: 2rem;
+}
+
+/* Button styling */
+.upload-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #902929;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  margin: auto;
+  transition: background-color 0.3s ease;
+}
+
+.upload-label {
+  color: black;
+  display: block;
+  margin: 0.5rem;
+}
+
+/* Disabled button styling */
+.upload-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Button hover effect */
+.upload-button:hover:enabled {
+  background-color: #ff0000;
+}
+
+/* Error message styling */
+.upload-error {
+  color: red;
+  margin-top: 20px;
+}
+
+.vlabel {
+  color: black;
+}
+.ilabel {
+  color: black;
+}

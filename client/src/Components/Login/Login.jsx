@@ -11,7 +11,7 @@ export default function Login() {
   const Navigate = useNavigate()
  const [email, setEmail] = useState("");
  const [password, setPassword] = useState("");
- const { FetchLoginData,message,user,setmessage } = useContext(MyContext);
+ const { FetchLoginData,user} = useContext(MyContext);
 
  useEffect(()=>{
   if(user){
