@@ -36,11 +36,7 @@ export default function Login() {
    <div className="login">
      <div className="top">
        <div className="wrapper">
-         <img
-           className="logo"
-           src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/2560px-Netflix_2015_logo.svg.png"
-           alt=""
-         />
+         <h1 className="red">Yetflicks</h1>
        </div>
      </div>
      <div className="container">
@@ -64,7 +60,7 @@ export default function Login() {
            Sign In
          </button>
          <span>
-           New to Netflix?
+           New to Yetflixks?
            <Link to={"/register"}>
              <b>Sign up now.</b>
            </Link>

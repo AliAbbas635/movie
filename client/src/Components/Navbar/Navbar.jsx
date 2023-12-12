@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import "./Navbar.css";
-import netfImg from "../../Static/Netflix.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faUser } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
@@ -49,7 +48,8 @@ const Navbar = () => {
       <div className="container">
         <div className="left">
           <Link to="/" className="link">
-            <img className="logo" src={netfImg} alt="Netflix" />
+            {/* <img className="logo" src={netfImg} alt="Netflix" /> */}
+            <h1 className="logo">Yetflicks</h1>
           </Link>
         </div>
 

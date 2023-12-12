@@ -35,6 +35,9 @@
     padding-right: 4px;
     cursor: pointer;
     background: none;
+    color: red;
+    font-weight: 700;
+    margin-left: 1rem;
 }
 
 .right{

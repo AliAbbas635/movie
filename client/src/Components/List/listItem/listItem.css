@@ -11,6 +11,13 @@
   background-color: black;
   display: flex;
 }
+.ImgTitle{
+  z-index: 1000;
+  position: absolute;
+  color: rgb(255, 255, 255);
+  bottom: 10%;
+  width: 17rem;
+}
 
 .listimg {
   align-items: center;

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import "./UploadMovie.css";
 import { MyContext } from "../ContextApi/MyContext";
 import BaseURL from "../BaseURL";
-import {toast,ToastContainer}  from "react-toastify"
+import { toast, ToastContainer } from "react-toastify";
 
 const UploadMovie = () => {
   const { user } = useContext(MyContext);
@@ -18,14 +18,26 @@ const UploadMovie = () => {
   const [isSeries, setIsSeries] = useState(false);
   const [image, setImage] = useState(null);
 
+  const genres = [
+    "Action",
+    "Comedy",
+    "Drama",
+    "Fantasy",
+    "Horror",
+    "Romance",
+    "Sci-Fi",
+    "Thriller",
+    "tourism"
+  ];
+
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
-    setError(""); 
+    setError("");
   };
 
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
-    setError(""); 
+    setError("");
   };
 
   const handleUpload = async () => {
@@ -52,7 +64,7 @@ const UploadMovie = () => {
       });
 
       console.log("File uploaded successfully:", response.data);
-      toast.success("Movie Uploaded Successfully")
+      toast.success("Movie Uploaded Successfully");
       setFile(null);
       setTitle("");
       setDescription("");
@@ -60,11 +72,10 @@ const UploadMovie = () => {
       setLimit("");
       setIsSeries(false);
       setImage(null);
-
     } catch (error) {
       console.error("Error uploading file:", error.message);
       setError("Something went wrong");
-      toast.error("Something went wrong")
+      toast.error("Something went wrong");
     } finally {
       setUploading(false);
     }
@@ -86,7 +97,7 @@ const UploadMovie = () => {
 
           {file && <p className="para">File Selected: {file.name}</p>}
 
-          <label className="vlabel" htmlFor="video">
+          <label className="vlabel margin" htmlFor="video">
             Add Video
           </label>
           <input
@@ -99,7 +110,7 @@ const UploadMovie = () => {
             className="upload-input"
           />
           <br />
-          <label className="ilabel" htmlFor="image">
+          <label className="ilabel margin" htmlFor="image">
             Add Image
           </label>
           <input
@@ -125,16 +136,22 @@ const UploadMovie = () => {
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="upload-input"
+            className="upload-input margin"
           />
 
-          <input
-            type="text"
-            placeholder="Genre"
+          <select
+            id="genre"
             value={genre}
             onChange={(e) => setGenre(e.target.value)}
-            className="upload-input"
-          />
+            className="upload-input margin"
+          >
+            <option value="">Select a Genre</option>
+            {genres.map((genre, index) => (
+              <option key={index} value={genre}>
+                {genre}
+              </option>
+            ))}
+          </select>
 
           <input
             type="text"
@@ -170,7 +187,7 @@ const UploadMovie = () => {
           <h1>Not Allowed</h1>
         </div>
       )}
-      <ToastContainer/>
+      <ToastContainer />
     </>
   );
 };

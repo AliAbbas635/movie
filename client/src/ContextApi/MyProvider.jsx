@@ -20,8 +20,11 @@ function MyProvider({ children }) {
         { name, email, password },
         { withCredentials: true }
       );
+      console.log(response.status);
       if (response.status === 200) {
         setUser(response.data);
+      }else{
+        setmessge("something went wrong")
       }
     } catch (error) {
       console.error("An error has occurred:", error.response.data);

@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import "./listItem.css";
 import { faThumbsDown, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 Modal.setAppElement("body");
+
 const ListItem = ({ mov }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleImageClick = () => {
@@ -29,7 +29,7 @@ const ListItem = ({ mov }) => {
 
   const handleLoadedMetadata = (e) => {
     setDuration(e.target.duration);
-    };
+  };
 
   return (
     <>
@@ -41,6 +41,7 @@ const ListItem = ({ mov }) => {
             className="listimg"
             onClick={handleImageClick}
           />
+          <h1 className="ImgTitle">{mov.title}</h1>
           <Modal
             isOpen={isModalOpen}
             onRequestClose={() => setIsModalOpen(false)}
@@ -57,7 +58,7 @@ const ListItem = ({ mov }) => {
                 marginRight: "-50%",
                 transform: "translate(-50%, -50%)",
                 height: "100%",
-                width:  "60%",
+                width: "60%",
                 zIndex: 1111,
               },
             }}
@@ -68,10 +69,7 @@ const ListItem = ({ mov }) => {
                 controls
                 onLoadedMetadata={handleLoadedMetadata}
               >
-                <source
-                  src={mov.video}
-                  type="video/mp4"
-                />
+                <source src={mov.video} type="video/mp4" />
               </video>
 
               <div className="movieinfo">

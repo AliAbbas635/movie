@@ -23,6 +23,8 @@ export default function Register() {
       Navigate("/");
     }
   }, [user, Navigate]);
+
+
   const handleStart = () => {
     setEmail(emailRef.current.value);
     setUsername(usernameRef.current.value);
@@ -30,9 +32,15 @@ export default function Register() {
       toast.error("Username or Email Must not empty");
     }
    };
+
+   
   const handleFinish = async (e) => {
     e.preventDefault();
-    FetchData(name, email, password);
+    await FetchData(name, email, password);
+    if(message){
+      toast.error(message);
+    }
+    console.log(message)
   };
 
   const handleChange = async (e) => {
@@ -44,7 +52,7 @@ export default function Register() {
     <div className="register">
       <div className="top">
         <div className="wrapper">
-          <img className="logo" src={logo} alt="" />
+         <h1 className="logo">Yetflicks</h1>
           <Link to={"/login "} className="link loginButton">
             Sign In
           </Link>

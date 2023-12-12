@@ -18,13 +18,28 @@ const List = () => {
   const leftIconRef = useRef();
   const rightIconRef = useRef();
 
-  const horrorMovies = useMemo(() => {
+  const tourismmovie = useMemo(() => {
     if (randomfifty) {
-      return randomfifty.filter(movie => movie.gener?.toLowerCase() === "horror");
+      return randomfifty.filter(
+        (movie) => movie.gener?.toLowerCase() === "tourism"
+      );
     }
     return [];
   }, [randomfifty]);
-  
+
+  function handleclick(direction) {
+    let distance = listref.current.getBoundingClientRect().x - 50;
+
+    if (direction === "left" && slideNumber > 0) {
+      setSlideNumber(slideNumber - 1);
+      listref.current.style.transform = `translateX(${360 + distance}px)`;
+    }
+    if (direction === "right" && slideNumber < 6) {
+      setSlideNumber(slideNumber + 1);
+      listref.current.style.transform = `translateX(${-300 + distance}px)`;
+    }
+  }
+
 
   function handleclick(direction) {
     let distance = listref.current.getBoundingClientRect().x - 50;
@@ -41,6 +56,42 @@ const List = () => {
 
   return (
     <>
+  {/* <div className="list">
+        <div className="wrapper">
+          <FontAwesomeIcon
+            className="slidarrow left"
+            icon={faChevronLeft}
+            ref={leftIconRef}
+            onClick={() => handleclick("left")}
+            style={{ display: slideNumber === 0 && "none" }}
+          />
+
+          <div className="listcontainer" ref={listref}>
+            {tourismmovie.length > 0 && (
+              <div className="movielist">
+                <span className="listTitle">Tourism Movies</span>
+                <div className="wrapper">
+                  <div className="listcontainer">
+                    {tourismmovie.map((movie) => (
+                      <ListItem key={movie._id} mov={movie} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <FontAwesomeIcon
+            className="slidarrow right"
+            icon={faChevronRight}
+            ref={rightIconRef}
+            onClick={() => handleclick("right")}
+            style={{ display: slideNumber === 5 && "none" }}
+          />
+        </div>
+      </div> */}
+
+
       <div className="list">
         <div className="wrapper">
           <FontAwesomeIcon
@@ -52,12 +103,12 @@ const List = () => {
           />
 
           <div className="listcontainer" ref={listref}>
-            {horrorMovies.length > 0 && (
+            {allmovie.length > 0 && (
               <div className="movielist">
-                <span className="listTitle">Horror</span>
+                <span className="listTitle">All Movies</span>
                 <div className="wrapper">
                   <div className="listcontainer">
-                    {horrorMovies.map((movie) => (
+                    {allmovie.map((movie) => (
                       <ListItem key={movie._id} mov={movie} />
                     ))}
                   </div>
@@ -76,19 +127,7 @@ const List = () => {
         </div>
       </div>
 
-      {allmovie.length > 0 && (
-        <div className="movielist">
-          <span className="listTitle">Recommended Movies</span>
-          <br />
-          <div className="wrapper">
-            <div className="listcontainer">
-              {allmovie.map((movie) => (
-                <ListItem key={movie._id} mov={movie} />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+    
     </>
   );
 };
