@@ -36,7 +36,7 @@ export default function Login() {
    <div className="login">
      <div className="top">
        <div className="wrapper">
-         <h1 className="red">Yetflicks</h1>
+         <h1 className="red">XFlix</h1>
        </div>
      </div>
      <div className="container">
@@ -60,7 +60,7 @@ export default function Login() {
            Sign In
          </button>
          <span>
-           New to Yetflixks?
+           New to XFlix?
            <Link to={"/register"}>
              <b>Sign up now.</b>
            </Link>

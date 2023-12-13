@@ -48,8 +48,7 @@ const Navbar = () => {
       <div className="container">
         <div className="left">
           <Link to="/" className="link">
-            {/* <img className="logo" src={netfImg} alt="Netflix" /> */}
-            <h1 className="logo">Yetflicks</h1>
+            <h1 className="logo">XFlix</h1>
           </Link>
         </div>
 

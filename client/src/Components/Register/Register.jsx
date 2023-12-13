@@ -4,7 +4,6 @@ import "./Register.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { MyContext } from "../../ContextApi/MyContext";
-import logo from "../../Static/Netflix.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -52,7 +51,7 @@ export default function Register() {
     <div className="register">
       <div className="top">
         <div className="wrapper">
-         <h1 className="logo">Yetflicks</h1>
+         <h1 className="logo">XFlix</h1>
           <Link to={"/login "} className="link loginButton">
             Sign In
           </Link>
