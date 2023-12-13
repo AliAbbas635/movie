@@ -65,7 +65,7 @@ export const DeleteMovie = async (req, res) => {
       // Delete the movie from the database
       await Movie.findByIdAndDelete(req.params.id);
 
-      res.status(200).json("The movie and associated blobs have been deleted...");
+      res.status(200).json("The movie have been deleted...");
     } catch (err) {
       res.status(500).json(err);
     }
