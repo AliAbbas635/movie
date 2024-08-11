@@ -19,6 +19,7 @@ import {
 import { MyContext } from "../../ContextApi/MyContext";
 import { useContext } from "react";
 import BaseURL from "../../BaseURL.js"
+import MovieStats from "./MovieStats.jsx";
 
 function AdminHome() {
   const [data, setdata] = useState();
@@ -120,6 +121,7 @@ function AdminHome() {
                 name="Number of Users per Month"
               />
             </BarChart>
+            <MovieStats />
           </ResponsiveContainer>
         </div>
       )}

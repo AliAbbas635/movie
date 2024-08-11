@@ -11,7 +11,8 @@ function MyProvider({ children }) {
   const [allmovie, setallmovie] = useState("");
   const [alluser, setalluser] = useState([]);
   const [searchresult, setsearchresult] = useState([]);
-  const [loading, setloading] = useState(false)
+  const [loading, setloading] = useState(false);
+  const [movieStats, setMovieStats] = useState(null);  // New state for movie stats
 
   async function FetchData(name, email, password) {
     try {
@@ -20,42 +21,65 @@ function MyProvider({ children }) {
         { name, email, password },
         { withCredentials: true }
       );
-      console.log(response.status);
+
       if (response.status === 200) {
-        setUser(response.data);
-      }else{
-        setmessge("something went wrong")
+        const token = response.data.token;
+        localStorage.setItem('token', token);
+        document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24}; secure=${process.env.NODE_ENV !== 'development'}; samesite=lax`;
+        setUser(response.data.user);
+      } else {
+        setmessge("Something went wrong");
       }
     } catch (error) {
-      console.error("An error has occurred:", error.response.data);
+      setmessge("An error has occurred");
+      console.error("An error has occurred:", error.response?.data || error.message);
     }
   }
 
   async function FetchMyData() {
     try {
+      const token = localStorage.getItem('token');
       const response = await axios.get(`${BaseURL}/user/profile`, {
         withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
       });
       if (response.status === 200) {
         setUser(response.data);
       }
     } catch (error) {
-      console.error("An error has occurred:", error.response.data);
+      if (error.response) {
+        console.error("An error has occurred:", error.response.data);
+      } else {
+        console.error("An error has occurred:", error.message);
+      }
     }
   }
 
   async function FetchAllUsers() {
     try {
+      const token = localStorage.getItem('token');
       const response = await axios.get(`${BaseURL}/user`, {
         withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
       });
       if (response.status === 200) {
         setalluser(response.data);
+      } else {
+        console.error("Failed to fetch users");
       }
     } catch (error) {
-      console.error("An error has occurred:", error.response.data);
+      console.error("An error has occurred:", error.response ? error.response.data : error.message);
     }
   }
+
   async function FetchLoginData(email, password) {
     try {
       const response = await axios.post(
@@ -65,36 +89,44 @@ function MyProvider({ children }) {
       );
 
       if (response.status === 200) {
+        const token = response.data.token;
+        localStorage.setItem('token', token);
+        document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24}; secure=${process.env.NODE_ENV !== 'development'}; samesite=lax`;
+        setUser(response.data.user);
         setmessge(response.data);
-        setUser(response.data);
       }
     } catch (error) {
       setmessge({ success: false });
-      console.error("An error has occurred:", error.response.data);
+      console.error("An error has occurred:", error.response?.data || error.message);
     }
   }
 
   async function LogoutUser() {
     try {
-      await axios.get(`${BaseURL}/user/logout`, {
-        withCredentials: true,
-      });
-      setUser("");
+      localStorage.removeItem('token');
+      document.cookie = `token=; path=/; max-age=0; secure=${process.env.NODE_ENV !== 'development'}; samesite=lax`;
+      await axios.post(`${BaseURL}/user/logout`, {}, { withCredentials: true });
+      setUser(null);
     } catch (error) {
-      setmessge(error.response.data);
-      console.error("An error has occurred:", error.response.data);
+      console.error("An error occurred during logout:", error.message);
     }
   }
 
   // //***************** Movie *********************
-
+  
   async function fetchRandomMovie() {
     try {
+      const token = localStorage.getItem('token');
       const response = await axios.get(`${BaseURL}/movie/random`, {
         withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
       });
       if (response.status === 200) {
-        setrandommov(response.data[0]);
+        setrandommov(response.data);
       } else {
         setmessge({ success: false });
       }
@@ -106,8 +138,14 @@ function MyProvider({ children }) {
 
   async function fetchRandomFifty() {
     try {
+      const token = localStorage.getItem('token');
       const response = await axios.get(`${BaseURL}/movie/random50`, {
         withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
       });
       if (response.status === 200) {
         setrandomfifty(response.data);
@@ -122,8 +160,14 @@ function MyProvider({ children }) {
 
   async function AllMovie() {
     try {
+      const token = localStorage.getItem('token');
       const response = await axios.get(`${BaseURL}/movie`, {
         withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
       });
       if (response.status === 200) {
         setallmovie(response.data);
@@ -139,24 +183,53 @@ function MyProvider({ children }) {
   async function SearchMov(title) {
     setloading(true);
     try {
+      const token = localStorage.getItem('token');
       const response = await axios.get(`${BaseURL}/movie/find`, {
         params: {
-          title: title 
+          title: title
         },
-        withCredentials: true 
+        withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
       });
 
       if (response.status === 200) {
         setsearchresult(response.data);
-        setloading(false)
+        setloading(false);
       } else {
-        setsearchresult("Fail to Found")
+        setsearchresult("Fail to Found");
         setmessge({ success: false });
-        setloading(false)
+        setloading(false);
       }
     } catch (error) {
       setmessge(error.response.data);
       console.error("An error has occurred:", error.response.data);
+      setloading(false);
+    }
+  }
+
+  // Fetch movie statistics
+  async function FetchMovieStats() {
+    try {
+      const token = localStorage.getItem('token'); // Retrieve token from local storage
+      const response = await axios.get(`${BaseURL}/movie/stat`, {
+        withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      });
+      if (response.status === 200) {
+        setMovieStats(response.data);
+      } else {
+        console.error("Failed to fetch movie stats");
+      }
+    } catch (error) {
+      console.error("An error has occurred:", error.response ? error.response.data : error.message);
     }
   }
 
@@ -170,7 +243,6 @@ function MyProvider({ children }) {
         message,
         setmessge,
         LogoutUser,
-        FetchMyData,
         fetchRandomMovie,
         randommov,
         fetchRandomFifty,
@@ -181,9 +253,13 @@ function MyProvider({ children }) {
         FetchAllUsers,
         SearchMov,
         searchresult,
+        setalluser,
         setsearchresult,
         loading,
-        setloading
+        setloading,
+        FetchMyData,
+        movieStats,     
+        FetchMovieStats,
       }}
     >
       {children}

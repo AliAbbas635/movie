@@ -1,0 +1,24 @@
+.dashboard-container {
+    padding: 20px;
+  }
+  
+  .charts-container {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+  }
+  
+  .chart {
+    width: 45%;
+  }
+  
+  h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+  }
+  

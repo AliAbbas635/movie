@@ -6,24 +6,22 @@ import List from "../Components/List/List";
 import { useContext } from "react";
 import { MyContext } from "../ContextApi/MyContext";
 import { useNavigate } from "react-router-dom";
+
+
 export default function Home() {
 
   const Navigate = useNavigate();
 
-  const { user,fetchRandomMovie,fetchRandomFifty,AllMovie ,FetchMyData} = useContext(MyContext);
+  const { user,fetchRandomMovie,fetchRandomFifty,AllMovie } = useContext(MyContext);
 
   useEffect(() => {
-    fetchRandomMovie();
-    fetchRandomFifty();
-    AllMovie();
+  fetchRandomMovie();
+  fetchRandomFifty();
+   AllMovie();
     if (!user) {
       Navigate("/login");
     }
   }, [user]);
-
-  useEffect(() => {
-    FetchMyData()
-  },[])
 
   return (
     <div>

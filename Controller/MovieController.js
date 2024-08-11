@@ -1,88 +1,142 @@
-import Movie from "../Database/Models/Movie.js";
-import User from "../Database/Models/User.js";
-import { BlobServiceClient } from "@azure/storage-blob";
+import { s3Client, bucketName } from './S3Client.js';
+import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import Movie from '../Database/Models/Movie.js';
+import { PutItemCommand } from '@aws-sdk/client-dynamodb';
+import { v4 as uuidv4 } from 'uuid';
+import { docClient  } from '../Database/ConnectDB.js';
 
 
+// Helper function to delete a file from S3
+const deleteFileFromS3 = async (key) => {
+  const params = {
+    Bucket: bucketName,
+    Key: key,
+  };
 
-const AZURE_STORAGE_CONNECTION_STRING =
-  "DefaultEndpointsProtocol=https;AccountName=netflixstoragea;AccountKey=yn4wSojCqXAZfScSK1QJRQuxlNSz2sye65+rBuy87RQgcMU8GlN6jSRWN392nB3jYs8WfRicI4D/+AStXtpKtA==;EndpointSuffix=core.windows.net";
-const containerName = "movie";
+  try {
+    await s3Client.send(new DeleteObjectCommand(params));
+  } catch (error) {
+    throw new Error('Error deleting file from S3');
+  }
+};
 
-const blobServiceClient = BlobServiceClient.fromConnectionString(
-  AZURE_STORAGE_CONNECTION_STRING
-);
-
-const containerClient = blobServiceClient.getContainerClient(containerName);
-
-
-//UPDATE
-
+// UPDATE
 export const UpdateMovie = async (req, res) => {
-  const usr = await User.findById(req.user);
-  if (usr.isAdmin) {
-    try {
-      const updatedMovie = await Movie.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: req.body,
-        },
-        { new: true }
-      );
-      res.status(200).json(updatedMovie);
-    } catch (err) {
-      res.status(500).json(err);
+  try {
+    const userId = req.user.id;
+
+    // Check if the user is an admin
+    const userParams = {
+      TableName: 'Users',
+      Key: {
+        id: userId,
+      },
+    };
+
+    const userResult = await docClient.get(userParams).promise();
+
+    if (!userResult.Item || !userResult.Item.isAdmin) {
+      return res.status(403).json('You are not allowed!');
     }
-  } else {
-    res.status(403).json("You are not allowed!");
+
+    // Prepare the update parameters
+    const updateParams = {
+      TableName: process.env.DYNAMODB_TABLE_NAME,
+      Key: {
+        id: req.params.id,
+      },
+      UpdateExpression: 'set ' + Object.keys(req.body).map((key, idx) => `#${key} = :${key}`).join(', '),
+      ExpressionAttributeNames: Object.keys(req.body).reduce((acc, key) => ({ ...acc, [`#${key}`]: key }), {}),
+      ExpressionAttributeValues: Object.keys(req.body).reduce((acc, key) => ({ ...acc, [`:${key}`]: req.body[key] }), {}),
+      ReturnValues: 'ALL_NEW',
+    };
+
+    // Update the movie in DynamoDB
+    const result = await docClient.update(updateParams).promise();
+
+    res.status(200).json(result.Attributes);
+  } catch (err) {
+    console.error('Error updating movie:', err);
+    res.status(500).json('Internal server error');
   }
 };
 
-//DELETE
-
+// DELETE
 export const DeleteMovie = async (req, res) => {
-  const usr = await User.findById(req.user);
-  if (usr.isAdmin) {
-    try {
-      const movie = await Movie.findById(req.params.id);
-      if (!movie) {
-        return res.status(404).json("Movie not found");
-      }
+  try {
+    const userId = req.user.id;
 
-      // Helper function to delete a blob given its filename
-      const deleteBlob = async (filename) => {
-        if (filename) {
-          const blockBlobClient = containerClient.getBlockBlobClient(filename);
-          await blockBlobClient.deleteIfExists(); // Use deleteIfExists to prevent error if blob not found
-        }
-      };
+    // Check if the user is an admin (assuming you have an isAdmin field in your user model)
+    const userParams = {
+      TableName: 'Users',
+      Key: {
+        id: userId,
+      },
+    };
 
-      // Extract filenames from URLs and delete blobs
-      const videoFilename = movie.video ? movie.video.split('/').pop() : null;
-      const imageFilename = movie.image ? movie.image.split('/').pop() : null;
-      await deleteBlob(videoFilename);
-      await deleteBlob(imageFilename);
+    const userResult = await docClient.get(userParams).promise();
 
-      // Delete the movie from the database
-      await Movie.findByIdAndDelete(req.params.id);
-
-      res.status(200).json("The movie have been deleted...");
-    } catch (err) {
-      res.status(500).json(err);
+    if (!userResult.Item || !userResult.Item.isAdmin) {
+      return res.status(403).json('You are not allowed!');
     }
-  } else {
-    res.status(403).json("You are not allowed!");
+
+    // Find the movie by ID in DynamoDB
+    const movieParams = {
+      TableName: process.env.DYNAMODB_TABLE_NAME,
+      Key: {
+        id: req.params.id,
+      },
+    };
+
+    const movieResult = await docClient.get(movieParams).promise();
+
+    if (!movieResult.Item) {
+      return res.status(404).json('Movie not found');
+    }
+
+    const movie = movieResult.Item;
+
+    // Extract filenames from URLs and delete blobs from S3
+    const videoFilename = movie.video ? movie.video.split('/').pop() : null;
+    const imageFilename = movie.image ? movie.image.split('/').pop() : null;
+
+    if (videoFilename) await deleteFileFromS3(videoFilename);
+    if (imageFilename) await deleteFileFromS3(imageFilename);
+
+    // Delete the movie from DynamoDB
+    await docClient.delete(movieParams).promise();
+
+    res.status(200).json('The movie has been deleted...');
+  } catch (err) {
+    console.error('Error deleting movie:', err);
+    res.status(500).json('Internal server error');
   }
 };
 
-
-//GET
-
+// GET - Search for movies by title
 export const SearchMovie = async (req, res) => {
   const { title } = req.query;
 
   try {
-    // Perform a case-insensitive search for movies with titles that partially match the provided title
-    const movies = await Movie.find({ title: { $regex: new RegExp(title, 'i') } });
+    if (!title) {
+      return res.status(400).json({ message: 'Title query parameter is required' });
+    }
+
+    // Define the parameters for the scan operation
+    const params = {
+      TableName: process.env.DYNAMODB_TABLE_NAME,
+      FilterExpression: 'contains(#title, :title)',
+      ExpressionAttributeNames: {
+        '#title': 'title', // DynamoDB reserved word, so aliasing it with '#title'
+      },
+      ExpressionAttributeValues: {
+        ':title': title, // The value to search for
+      },
+    };
+
+    // Scan the table with the filter
+    const data = await docClient.scan(params).promise();
+    const movies = data.Items;
 
     if (movies.length === 0) {
       return res.status(404).json({ message: 'No movies found with that title.' });
@@ -90,111 +144,215 @@ export const SearchMovie = async (req, res) => {
 
     res.status(200).json(movies);
   } catch (error) {
-    console.log(error.message)
+    console.error('Error searching for movie:', error.message);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 
-//GET RANDOM
-
+// GET RANDOM
 export const RandomMovie = async (req, res) => {
   const type = req.query.type;
-  let movie;
+  let params = {
+    TableName: process.env.DYNAMODB_TABLE_NAME,
+  };
+
+  if (type) {
+    params.FilterExpression = 'isSeries = :isSeries';
+    params.ExpressionAttributeValues = { ':isSeries': type === 'series' };
+  }
+
   try {
-    if (type === "series") {
-      movie = await Movie.aggregate([
-        { $match: { isSeries: true } },
-        { $sample: { size: 1 } },
-      ]);
-    } else {
-      movie = await Movie.aggregate([
-        { $match: { isSeries: false } },
-        { $sample: { size: 1 } },
-      ]);
+    // First, attempt to fetch movies based on the provided type
+    let data = await docClient.scan(params).promise();
+    let movies = data.Items;
+
+    // If no movies found with the specified type, fallback to fetching any movie
+    if (movies.length === 0) {
+      console.log('No movies found with the specified type. Fetching any random movie.');
+      delete params.FilterExpression;
+      delete params.ExpressionAttributeValues;
+      data = await docClient.scan(params).promise();
+      movies = data.Items;
     }
-    res.status(200).json(movie);
+
+    // If still no movies found, return an error
+    if (movies.length === 0) {
+      return res.status(404).json({ message: 'No movies found in the database' });
+    }
+
+    // Select a random movie from the available movies
+    const randomIndex = Math.floor(Math.random() * movies.length);
+    const randomMovie = movies[randomIndex];
+
+    res.status(200).json(randomMovie);
   } catch (err) {
-    res.status(500).json(err);
+    console.error('Error fetching random movie:', err);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
-//GEt Randomfifty
-
+// GET RANDOM FIFTY
 export const RandomFiftyMovie = async (req, res) => {
   const type = req.query.type;
-  let movie;
+  let params = {
+    TableName: process.env.DYNAMODB_TABLE_NAME,
+  };
+
+  if (type === 'series') {
+    params.FilterExpression = 'isSeries = :isSeries';
+    params.ExpressionAttributeValues = { ':isSeries': true };
+  } else {
+    params.FilterExpression = 'isSeries = :isSeries';
+    params.ExpressionAttributeValues = { ':isSeries': false };
+  }
+
   try {
-    if (type === "series") {
-      movie = await Movie.aggregate([
-        { $match: { isSeries: true } },
-        { $sample: { size: 50 } },
-      ]);
+    const result = await docClient.scan(params).promise();
+
+    if (result.Items) {
+      // Shuffle the array to get random movies
+      const shuffledMovies = result.Items.sort(() => 0.5 - Math.random());
+
+      // Get the first 50 movies from the shuffled array
+      const selectedMovies = shuffledMovies.slice(0, 50);
+
+      res.status(200).json(selectedMovies);
     } else {
-      movie = await Movie.aggregate([
-        { $match: { isSeries: false } },
-        { $sample: { size: 50 } },
-      ]);
+      res.status(404).json({ message: 'No movies found' });
     }
-    res.status(200).json(movie);
   } catch (err) {
-    res.status(500).json(err);
+    console.error('Error fetching movies:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+// GET ALL MOVIES
+export const AllMovies = async (req, res) => {
+  try {
+    // Fetch the user's ID from the request object (set by isAuth middleware)
+    const userId = req.user.id;
+console.log(userId)
+    // Fetch the user's data from DynamoDB to check if the user is an admin
+    const userParams = {
+      TableName: 'Users', 
+      Key: {
+        id: userId, 
+      },
+    };
+
+    const userResult = await docClient.get(userParams).promise();
+
+    if (!userResult.Item || !userResult.Item.isAdmin) {
+      return res.status(403).json('You are not allowed!');
+    }
+
+    // Fetch all movies from the Movies table in DynamoDB
+    const params = {
+      TableName: process.env.DYNAMODB_TABLE_NAME, 
+    };
+
+    const moviesResult = await docClient.scan(params).promise();
+    const movies = moviesResult.Items;
+
+    res.status(200).json(movies.reverse());
+  } catch (error) {
+    console.error('Error fetching movies:', error);
+    res.status(500).json('Internal Server Error');
   }
 };
 
-//GET ALL
 
-export const AllMovies = async (req, res) => {
-  const usr = await User.findById(req.user);
- 
-    try {
-      const movies = await Movie.find();
-      res.status(200).json(movies.reverse());
-    } catch (err) {
-      res.status(500).json(err);
-    }
-};
-
-//upload movie
-
+// UPLOAD MOVIE
 export const UploadMovie = async (req, res) => {
- 
   try {
     if (!req.files) {
-      console.log("No file uploaded");
-      return res.status(400).send("No file uploaded");
+      console.log('No file uploaded');
+      return res.status(400).send('No file uploaded');
     }
 
     const { title, desc, genre, limit, isSeries } = req.body;
+    const movieId = uuidv4(); // Generate a unique ID for the movie
+
+    // Upload video file to S3
     const videoFile = req.files.video[0].buffer;
+    const videoFileName = `${movieId}-${req.files.video[0].originalname}`;
+    const videoUrl = await uploadFileToS3(videoFile, videoFileName, req.files.video[0].mimetype);
+
+    // Upload image (movie poster) to S3
     const imageFile = req.files.image[0].buffer;
-    const videoFileName = req.files.video[0].originalname;
-    const imageFileName = req.files.image[0].originalname;
- 
-    const blockBlobClient = containerClient.getBlockBlobClient(videoFileName);
-    const blockBlobClientImage = containerClient.getBlockBlobClient(imageFileName);
- 
-    await blockBlobClient.upload(videoFile, videoFile.length);
-    await blockBlobClientImage.upload(imageFile, imageFile.length);
- 
-    const blobUrl = blockBlobClient.url;
-    const imageBlobUrl = blockBlobClientImage.url;
- 
-    const newMovie = new Movie({
-      title,
-      desc,
-      gener: genre, 
-      image: imageBlobUrl, 
-      imgTitle: imageFileName,
-      video: blobUrl, 
-      limit,
-      isSeries,
-    });
- 
-    const savedMovie = await newMovie.save();
-    res.status(200).json({ message: 'File uploaded successfully', savedMovie });
+    const imageFileName = `${movieId}-${req.files.image[0].originalname}`;
+    const imageUrl = await uploadFileToS3(imageFile, imageFileName, req.files.image[0].mimetype);
+
+    // Prepare movie data for DynamoDB
+    const movieData = {
+      TableName: process.env.DYNAMODB_TABLE_NAME,
+      Item: {
+        id: movieId,
+        title: title,
+        desc: desc,
+        genre: genre,
+        image: imageUrl,
+        imgTitle: imageFileName,
+        video: videoUrl,
+        limit: limit,
+        isSeries: isSeries === 'true', 
+      },
+    };
+
+    
+
+    // Save movie data to DynamoDB
+    await docClient.put(movieData).promise();
+
+    res.status(200).json({ message: 'Movie uploaded and stored successfully', movie: movieData.Item });
   } catch (error) {
     console.error('Error uploading file:', error);
     res.status(500).send('Error uploading file');
   }
- };
+};
+
+// Helper function to upload a file to S3
+const uploadFileToS3 = async (buffer, key, mimeType) => {
+  const params = {
+    Bucket: process.env.S3_BUCKET_NAME,
+    Key: key,
+    Body: buffer,
+    ContentType: mimeType,
+  };
+
+  try {
+    await s3Client.send(new PutObjectCommand(params));
+    return `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+  } catch (error) {
+    throw new Error('Error uploading file to S3');
+  }
+};
+
+export const MovieStats = async (req, res) => {
+  try {
+    const params = {
+      TableName: 'Movies',
+    };
+
+    const result = await docClient.scan(params).promise();
+    const movies = result.Items;
+
+    // Aggregate movies by genre
+    const genreStats = movies.reduce((acc, movie) => {
+      const genre = movie.genre || 'Unknown';
+      acc[genre] = (acc[genre] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Convert genreStats object to an array for easier consumption
+    const genreStatsArray = Object.keys(genreStats).map((genre) => ({
+      genre,
+      total: genreStats[genre],
+    }));
+
+    res.status(200).json(genreStatsArray);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};

@@ -7,21 +7,25 @@
   overflow: hidden;
   cursor: pointer;
   color: white;
-  transition: height 5s ease-in-out;
   background-color: black;
   display: flex;
+  position: relative; /* Ensure the image title is correctly positioned */
 }
-.ImgTitle{
+
+.ImgTitle {
   z-index: 1000;
   position: absolute;
-  color: rgb(255, 255, 255);
+  color: white;
   bottom: 10%;
+  left: 10px;
   width: 17rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Add text shadow for readability */
 }
 
 .listimg {
-  align-items: center;
-  object-fit: fit;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Cover the container while maintaining aspect ratio */
   transition: transform 0.5s ease-in-out;
 }
 
@@ -42,42 +46,40 @@
   margin-top: 4.5rem;
 }
 
-.movieinfo{
-    color: white;
+.movieinfo {
+  color: white;
 }
 
-.titlemov{
-    font-size: 50px;
+.titlemov {
+  font-size: 50px;
 }
 
-.desc{
-    margin: 0.5rem;
+.desc {
+  margin: 0.5rem;
 }
 
-.duration{
-    color: rgb(87, 73, 73);
+.duration {
+  color: rgb(87, 73, 73);
 }
 
-.rating{
-    display: inline-flex;
-    flex-direction: column;
+.rating {
+  display: inline-flex;
+  flex-direction: column;
 }
 
-.thumbs{
-    font-size: 35px;
-    padding: 0px 5px;
-    margin-top: 2px;
-    cursor: pointer;
-    color: rgba(0, 0, 0, 0.4);
+.thumbs {
+  font-size: 35px;
+  padding: 0px 5px;
+  margin-top: 2px;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.4);
 }
 
-
-.white{
-    color: white;
+.white {
+  color: white;
 }
 
 .video-fullscreen {
   width: 100% !important;
   height: 100% !important;
- }
- 
+}

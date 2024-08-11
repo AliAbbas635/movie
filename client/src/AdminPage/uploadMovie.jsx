@@ -83,7 +83,7 @@ const UploadMovie = () => {
 
   return (
     <>
-      {user && user.MyProfile && user.MyProfile.isAdmin ? (
+      {user && user.isAdmin ? (
         <div className="upload-page">
           <Link to={"/dashboard"} className="left-btn">
             Dashboard

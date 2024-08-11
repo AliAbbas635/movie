@@ -34,7 +34,7 @@ const Navbar = () => {
   }
 
   useEffect(() => {
-    if (user?.MyProfile?.isAdmin) {
+    if (user.isAdmin) {
       setshowdashboard(true);
     }
   }, [user]);

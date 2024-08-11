@@ -1,31 +1,33 @@
-import React, { useRef, useState, useMemo } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import "./List.css";
-import {
-  faChevronLeft,
-  faChevronRight,
-} from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ListItem from "./listItem/ListItem";
 import { useContext } from "react";
 import { MyContext } from "../../ContextApi/MyContext";
+import ListItem from "../List/listItem/ListItem"
 
 const List = () => {
-  const { randomfifty, allmovie } = useContext(MyContext);
-
+  const { allmovie } = useContext(MyContext);
   const [slideNumber, setSlideNumber] = useState(0);
 
   const listref = useRef();
   const leftIconRef = useRef();
   const rightIconRef = useRef();
 
-  const tourismmovie = useMemo(() => {
-    if (randomfifty) {
-      return randomfifty.filter(
-        (movie) => movie.gener?.toLowerCase() === "tourism"
-      );
-    }
-    return [];
-  }, [randomfifty]);
+  useEffect(() => {
+    // Add event listeners for better performance handling
+    const handleResize = () => {
+      if (listref.current) {
+        const distance = listref.current.getBoundingClientRect().x - 50;
+        listref.current.style.transform = `translateX(${-300 * slideNumber + distance}px)`;
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [slideNumber]);
 
   function handleclick(direction) {
     let distance = listref.current.getBoundingClientRect().x - 50;
@@ -34,21 +36,7 @@ const List = () => {
       setSlideNumber(slideNumber - 1);
       listref.current.style.transform = `translateX(${360 + distance}px)`;
     }
-    if (direction === "right" && slideNumber < 6) {
-      setSlideNumber(slideNumber + 1);
-      listref.current.style.transform = `translateX(${-300 + distance}px)`;
-    }
-  }
-
-
-  function handleclick(direction) {
-    let distance = listref.current.getBoundingClientRect().x - 50;
-
-    if (direction === "left" && slideNumber > 0) {
-      setSlideNumber(slideNumber - 1);
-      listref.current.style.transform = `translateX(${360 + distance}px)`;
-    }
-    if (direction === "right" && slideNumber < 6) {
+    if (direction === "right" && slideNumber < allmovie.length / 5 - 1) {
       setSlideNumber(slideNumber + 1);
       listref.current.style.transform = `translateX(${-300 + distance}px)`;
     }
@@ -56,42 +44,6 @@ const List = () => {
 
   return (
     <>
-  {/* <div className="list">
-        <div className="wrapper">
-          <FontAwesomeIcon
-            className="slidarrow left"
-            icon={faChevronLeft}
-            ref={leftIconRef}
-            onClick={() => handleclick("left")}
-            style={{ display: slideNumber === 0 && "none" }}
-          />
-
-          <div className="listcontainer" ref={listref}>
-            {tourismmovie.length > 0 && (
-              <div className="movielist">
-                <span className="listTitle">Tourism Movies</span>
-                <div className="wrapper">
-                  <div className="listcontainer">
-                    {tourismmovie.map((movie) => (
-                      <ListItem key={movie._id} mov={movie} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <FontAwesomeIcon
-            className="slidarrow right"
-            icon={faChevronRight}
-            ref={rightIconRef}
-            onClick={() => handleclick("right")}
-            style={{ display: slideNumber === 5 && "none" }}
-          />
-        </div>
-      </div> */}
-
-
       <div className="list">
         <div className="wrapper">
           <FontAwesomeIcon
@@ -99,7 +51,7 @@ const List = () => {
             icon={faChevronLeft}
             ref={leftIconRef}
             onClick={() => handleclick("left")}
-            style={{ display: slideNumber === 0 && "none" }}
+            style={{ display: slideNumber === 0 ? "none" : "block" }}
           />
 
           <div className="listcontainer" ref={listref}>
@@ -109,7 +61,7 @@ const List = () => {
                 <div className="wrapper">
                   <div className="listcontainer">
                     {allmovie.map((movie) => (
-                      <ListItem key={movie._id} mov={movie} />
+                      <ListItem key={movie.id} mov={movie} />
                     ))}
                   </div>
                 </div>
@@ -122,12 +74,10 @@ const List = () => {
             icon={faChevronRight}
             ref={rightIconRef}
             onClick={() => handleclick("right")}
-            style={{ display: slideNumber === 5 && "none" }}
+            style={{ display: slideNumber === allmovie.length / 5 - 1 ? "none" : "block" }}
           />
         </div>
       </div>
-
-    
     </>
   );
 };

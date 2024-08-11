@@ -1,14 +1,18 @@
 import React, { useEffect } from "react";
 import { MyContext } from "../../ContextApi/MyContext";
 import { useContext } from "react";
+import { useState } from "react";
 import "./User.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import {toast, ToastContainer} from 'react-toastify'
-import BaseURL from "../../BaseURL"
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import the toastify CSS
+import BaseURL from "../../BaseURL";
 
 const Moviesdetail = () => {
   const { AllMovie, allmovie, user } = useContext(MyContext);
+  const [deleting, setDeleting] = useState(null); // Track the deleting state
+
   useEffect(() => {
     AllMovie();
   }, []);
@@ -25,22 +29,38 @@ const Moviesdetail = () => {
   }
 
   async function onDelete(id) {
-    const response = await axios
-      .delete(`${BaseURL}/movie/${id}`, {
+    try {
+      setDeleting(id); // Set the deleting state to the movie ID
+
+      const token = localStorage.getItem('token'); // Retrieve token from local storage
+
+      const response = await axios.delete(`${BaseURL}/movie/${id}`, {
         withCredentials: true,
-      })
-      
-      if(response.status === 200){
-        toast.success(response.data)
-        AllMovie()
-      }else{
-        console.log(response.data.message )
+        headers: {
+          'Authorization': `Bearer ${token}`,  // Send token in the Authorization header
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.status === 200) {
+        toast.success("Movie deleted successfully");
+        AllMovie(); // Refresh the movie list after deletion
+      } else {
+        toast.error("Failed to delete movie");
+        console.log(response.data.message);
       }
+    } catch (error) {
+      toast.error("An error occurred");
+      console.error("An error has occurred:", error.response ? error.response.data : error.message);
+    } finally {
+      setDeleting(null); // Reset the deleting state
+    }
   }
 
   return (
     <>
-      {user && user.MyProfile && user.MyProfile.isAdmin ? (
+      <ToastContainer /> {/* Toast Container to show notifications */}
+      {user && user.isAdmin ? (
         <>
           <h1 style={{ margin: "1rem" }}>All Movies List</h1>
           <div>
@@ -64,27 +84,28 @@ const Moviesdetail = () => {
               </tr>
             </thead>
             <tbody>
-              {allmovie &&
-                allmovie.map((movie, index) => (
-                  <tr key={index}>
-                    <td>{movie.title}</td>
-                    <td>{truncateDescription(movie.desc)}</td>
-                    <td>{movie.gener}</td>
-                    <td>{movie.limit}</td>
-                    <td>
-                      <button onClick={() => onDelete(movie._id)}>
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+              {allmovie && allmovie.map((movie, index) => (
+                <tr key={index}>
+                  <td>{movie.title}</td>
+                  <td>{truncateDescription(movie.desc)}</td>
+                  <td>{movie.genre}</td>
+                  <td>{movie.limit}</td>
+                  <td>
+                    <button 
+                      onClick={() => onDelete(movie.id)} 
+                      disabled={deleting === movie.id} // Disable button if deleting
+                    >
+                      {deleting === movie.id ? "Deleting..." : "Delete"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </>
       ) : (
-        <h1>You are not Allowed</h1>
+        <h1>You are not allowed to view this page</h1>
       )}
-      <ToastContainer/>
     </>
   );
 };

@@ -1,10 +1,29 @@
-import mongoose from "mongoose";
+import AWS from 'aws-sdk';
+import dotenv from 'dotenv';
 
-export const ConnectDb= ()=>{
-    mongoose.connect('mongodb://netflixdb:UNKN9OTR8u18wZf8gU4WRF8hBeUisjaCAE1cwl7Zp1FpNA1E45dX8vHakb1znqfiao8QFBsb5w5qACDburaAbw==@netflixdb.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&maxIdleTimeMS=120000&appName=@netflixdb@').then(()=>{
-        console.log("Connected to database")
-    }).catch((error)=>{
-        return console.log("error connecting to database")
-    })
-}
+// Load environment variables from .env file
+dotenv.config({ path: './config.env' });
 
+// Configure AWS SDK
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION
+});
+
+// Create DynamoDB service object
+const dynamoDb = new AWS.DynamoDB();
+const docClient = new AWS.DynamoDB.DocumentClient();
+
+// Function to test connection
+export const ConnectDb = async () => {
+  try {
+    // List tables as a way to test the connection
+    const data = await dynamoDb.listTables().promise();
+    console.log("Connected to DynamoDB. Tables:", data.TableNames);
+  } catch (error) {
+    console.error("Error connecting to DynamoDB:", error);
+  }
+};
+
+export { dynamoDb, docClient };

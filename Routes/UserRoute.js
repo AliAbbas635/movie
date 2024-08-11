@@ -3,7 +3,7 @@ import { Register,Login, Logout , UpdateUser, DeleteUser, GetUser,GetAllUsers, S
 import { isAuth } from "../Middleware/isAuth.js";
 
 const router = express.Router();
-router.get("/profile", isAuth, MyProfile)
+router.get("/profile",isAuth, MyProfile)
 router.post("/register", Register);
 router.post("/login", Login)
 router.get("/logout", Logout)

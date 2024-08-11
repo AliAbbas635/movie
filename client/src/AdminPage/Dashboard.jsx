@@ -17,7 +17,7 @@ function App() {
 
   return (
     <>
-      {user && user.MyProfile && user.MyProfile.isAdmin ? (
+      {user && user.isAdmin ? (
         <div className="grid-container">
           <Header OpenSidebar={OpenSidebar} />
           <Sidebar

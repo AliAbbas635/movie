@@ -58,22 +58,11 @@ export const SearchItem = ({ mov }) => {
   const handleImageClick = () => {
     setIsModalOpen(true);
   };
-  const [thumbsUpSelected, setThumbsUpSelected] = useState(false);
-  const [thumbsDownSelected, setThumbsDownSelected] = useState(false);
   const [duration, setDuration] = useState(0);
   let hours = Math.floor(duration / 3600);
   let minutes = Math.floor((duration % 3600) / 60);
   let seconds = Math.floor(duration % 60);
 
-  const handleThumbsUpClick = () => {
-    setThumbsUpSelected(true);
-    setThumbsDownSelected(false);
-  };
-
-  const handleThumbsDownClick = () => {
-    setThumbsDownSelected(true);
-    setThumbsUpSelected(false);
-  };
 
   const handleLoadedMetadata = (e) => {
     setDuration(e.target.duration);

@@ -8,7 +8,6 @@ import { MyContext } from "../../ContextApi/MyContext";
 
 const Features = () => {
   const { randommov } = useContext(MyContext);
-
   const [showplayer, setshowplayer] = useState(false);
   const [showinfo, setshowinfo] = useState(false);
   function HandlePlay() {
