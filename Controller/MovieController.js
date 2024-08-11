@@ -1,10 +1,7 @@
 import { s3Client, bucketName } from './S3Client.js';
 import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
-import Movie from '../Database/Models/Movie.js';
-import { PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { v4 as uuidv4 } from 'uuid';
-import { docClient  } from '../Database/ConnectDB.js';
-
+import { docClient } from '../Database/ConnectDB.js';
 
 // Helper function to delete a file from S3
 const deleteFileFromS3 = async (key) => {
@@ -20,7 +17,7 @@ const deleteFileFromS3 = async (key) => {
   }
 };
 
-// UPDATE
+// UPDATE Movie
 export const UpdateMovie = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -61,12 +58,12 @@ export const UpdateMovie = async (req, res) => {
   }
 };
 
-// DELETE
+// DELETE Movie
 export const DeleteMovie = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    // Check if the user is an admin (assuming you have an isAdmin field in your user model)
+    // Check if the user is an admin
     const userParams = {
       TableName: 'Users',
       Key: {
@@ -96,7 +93,7 @@ export const DeleteMovie = async (req, res) => {
 
     const movie = movieResult.Item;
 
-    // Extract filenames from URLs and delete blobs from S3
+    // Extract filenames from URLs and delete files from S3
     const videoFilename = movie.video ? movie.video.split('/').pop() : null;
     const imageFilename = movie.image ? movie.image.split('/').pop() : null;
 
@@ -149,8 +146,7 @@ export const SearchMovie = async (req, res) => {
   }
 };
 
-
-// GET RANDOM
+// GET RANDOM Movie
 export const RandomMovie = async (req, res) => {
   const type = req.query.type;
   let params = {
@@ -163,7 +159,6 @@ export const RandomMovie = async (req, res) => {
   }
 
   try {
-    // First, attempt to fetch movies based on the provided type
     let data = await docClient.scan(params).promise();
     let movies = data.Items;
 
@@ -192,19 +187,16 @@ export const RandomMovie = async (req, res) => {
   }
 };
 
-// GET RANDOM FIFTY
+// GET RANDOM 50 Movies
 export const RandomFiftyMovie = async (req, res) => {
   const type = req.query.type;
   let params = {
     TableName: process.env.DYNAMODB_TABLE_NAME,
   };
 
-  if (type === 'series') {
+  if (type) {
     params.FilterExpression = 'isSeries = :isSeries';
-    params.ExpressionAttributeValues = { ':isSeries': true };
-  } else {
-    params.FilterExpression = 'isSeries = :isSeries';
-    params.ExpressionAttributeValues = { ':isSeries': false };
+    params.ExpressionAttributeValues = { ':isSeries': type === 'series' };
   }
 
   try {
@@ -225,15 +217,14 @@ export const RandomFiftyMovie = async (req, res) => {
     console.error('Error fetching movies:', err);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
 
 // GET ALL MOVIES
 export const AllMovies = async (req, res) => {
   try {
-    // Fetch the user's ID from the request object (set by isAuth middleware)
     const userId = req.user.id;
-console.log(userId)
-    // Fetch the user's data from DynamoDB to check if the user is an admin
+    console.log(userId);
+
     const userParams = {
       TableName: 'Users', 
       Key: {
@@ -247,7 +238,6 @@ console.log(userId)
       return res.status(403).json('You are not allowed!');
     }
 
-    // Fetch all movies from the Movies table in DynamoDB
     const params = {
       TableName: process.env.DYNAMODB_TABLE_NAME, 
     };
@@ -261,7 +251,6 @@ console.log(userId)
     res.status(500).json('Internal Server Error');
   }
 };
-
 
 // UPLOAD MOVIE
 export const UploadMovie = async (req, res) => {
@@ -300,8 +289,6 @@ export const UploadMovie = async (req, res) => {
       },
     };
 
-    
-
     // Save movie data to DynamoDB
     await docClient.put(movieData).promise();
 
@@ -329,6 +316,7 @@ const uploadFileToS3 = async (buffer, key, mimeType) => {
   }
 };
 
+// GET MOVIE STATS
 export const MovieStats = async (req, res) => {
   try {
     const params = {
