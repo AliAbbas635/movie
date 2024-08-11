@@ -3,20 +3,6 @@ import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid';
 import { docClient } from '../Database/ConnectDB.js';
 
-// Helper function to delete a file from S3
-const deleteFileFromS3 = async (key) => {
-  const params = {
-    Bucket: bucketName,
-    Key: key,
-  };
-
-  try {
-    await s3Client.send(new DeleteObjectCommand(params));
-  } catch (error) {
-    throw new Error('Error deleting file from S3');
-  }
-};
-
 // UPDATE Movie
 export const UpdateMovie = async (req, res) => {
   try {
@@ -109,6 +95,22 @@ export const DeleteMovie = async (req, res) => {
     res.status(500).json('Internal server error');
   }
 };
+
+
+// Helper function to delete a file from S3
+const deleteFileFromS3 = async (key) => {
+  const params = {
+    Bucket: bucketName,
+    Key: key,
+  };
+
+  try {
+    await s3Client.send(new DeleteObjectCommand(params));
+  } catch (error) {
+    throw new Error('Error deleting file from S3');
+  }
+};
+
 
 // GET - Search for movies by title
 export const SearchMovie = async (req, res) => {
@@ -232,11 +234,7 @@ export const AllMovies = async (req, res) => {
       },
     };
 
-    const userResult = await docClient.get(userParams).promise();
-
-    if (!userResult.Item || !userResult.Item.isAdmin) {
-      return res.status(403).json('You are not allowed!');
-    }
+    
 
     const params = {
       TableName: process.env.DYNAMODB_TABLE_NAME, 
