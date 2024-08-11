@@ -3,3 +3,8 @@ node_modules
 config.env
 
 ./client/node_modules
+
+node_modules/
+.env
+.DS_Store
+*.log
