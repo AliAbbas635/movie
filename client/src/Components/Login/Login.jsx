@@ -23,6 +23,8 @@ export default function Login() {
  const handleSignIn = async (e) => {
    e.preventDefault();
  await  FetchLoginData(email, password)
+
+ console.log(email, password)
    if (user) {
     toast.success("Log in Successfull")
     Navigate("/")
@@ -36,7 +38,7 @@ export default function Login() {
    <div className="login">
      <div className="top">
        <div className="wrapper">
-         <h1 className="red">XFlix</h1>
+         <h1 className="red">VIEW FIESTA</h1>
        </div>
      </div>
      <div className="container">
@@ -49,18 +51,20 @@ export default function Login() {
            value={email}
            onChange={(e) => setEmail(e.target.value)}
          />
-         <input
+        <input
            type="password"
            placeholder="Password"
            value={password}
            
            onChange={(e) => setPassword(e.target.value)}
          />
+
+
          <button className="loginButton" onClick={handleSignIn}>
            Sign In
          </button>
          <span>
-           New to XFlix?
+           New to VIEW FIESTA?
            <Link to={"/register"}>
              <b>Sign up now.</b>
            </Link>

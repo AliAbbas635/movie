@@ -1,123 +1,171 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { createUser, findUserByEmail } from "../Database/Models/User.js"
 import { docClient } from '../Database/ConnectDB.js';
+import { v4 as uuidv4 } from 'uuid';
 
-
-
+// Register Route
 export const Register = async (req, res) => {
   try {
-      const { name, email, password } = req.body;
+    const { name, email, password } = req.body;
 
-      if (!name || !email || !password) {
-          return res.status(400).json({
-              success: false,
-              message: 'Please fill in all fields',
-          });
-      }
-
-      const existingUser = await findUserByEmail(email); // Function to find user by email from DB
-
-      if (existingUser) {
-          return res.status(400).json({
-              success: false,
-              message: 'User already exists',
-          });
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      const newUser = await createUser({
-          name,
-          email,
-          password: hashedPassword,
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please fill in all fields',
       });
+    }
 
-      const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    // Check if the user already exists
+    const existingUserParams = {
+      TableName: 'Users',
+      IndexName: 'email-index', // GSI for email lookup
+      KeyConditionExpression: 'email = :email',
+      ExpressionAttributeValues: {
+        ':email': email,
+      },
+    };
 
-      res.cookie('token', token, {
-          maxAge: 1000 * 60 * 60 * 24, // 1 day
-          httpOnly: true,
-          sameSite: process.env.NODE_ENV === 'development' ? 'lax' : 'none',
-          secure: process.env.NODE_ENV !== 'development',
+    const existingUserResult = await docClient.query(existingUserParams).promise();
+    const existingUser = existingUserResult.Items && existingUserResult.Items.length > 0 ? existingUserResult.Items[0] : undefined;
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'User already exists',
       });
+    }
 
-      res.status(200).json({
-          success: true,
-          message: 'Registered successfully',
-          user: { id: newUser.id, email: newUser.email, name: newUser.name },
-          token, // Send the token in the response
-      });
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user
+    const newUser = {
+      id: uuidv4(),
+      name,
+      email,
+      password: hashedPassword,
+      isAdmin: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    const params = {
+      TableName: 'Users',
+      Item: newUser,
+    };
+
+    await docClient.put(params).promise();
+
+    // Generate a JWT token
+    const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+    // Set the token as a cookie
+    res.cookie('token', token, {
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === 'development' ? 'lax' : 'none',
+      secure: process.env.NODE_ENV !== 'development',
+    });
+
+    // Respond with the new user's data
+    res.status(200).json({
+      success: true,
+      message: 'Registered successfully',
+      user: { id: newUser.id, email: newUser.email, name: newUser.name },
+      token,
+    });
   } catch (error) {
-      res.status(500).json({
-          success: false,
-          message: error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
-
+// Login Route
 export const Login = async (req, res) => {
   try {
-      const { email, password } = req.body;
+    const { email, password } = req.body;
 
-      if (!email || !password) {
-          return res.status(400).json({
-              success: false,
-              message: 'Please fill in all fields',
-          });
-      }
-
-      const user = await findUserByEmail(email); // Function to find user by email from DB
-
-      if (!user) {
-          return res.status(400).json({
-              success: false,
-              message: 'Invalid credentials',
-          });
-      }
-
-      const isMatch = await bcrypt.compare(password, user.password);
-
-      if (!isMatch) {
-          return res.status(400).json({
-              success: false,
-              message: 'Invalid credentials',
-          });
-      }
-
-      const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
-
-      res.cookie('token', token, {
-          maxAge: 1000 * 60 * 60 * 24, // 1 day
-          httpOnly: true,
-          sameSite: process.env.NODE_ENV === 'development' ? 'lax' : 'none',
-          secure: process.env.NODE_ENV !== 'development',
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please fill in all fields',
       });
+    }
 
-      res.status(200).json({
-          success: true,
-          message: 'Logged in successfully',
-          user: { id: user.id, email: user.email, name: user.name },
-          token, // Send the token in the response
+    // Find the user by email
+    const params = {
+      TableName: 'Users',
+      IndexName: 'email-index', // GSI for email lookup
+      KeyConditionExpression: 'email = :email',
+      ExpressionAttributeValues: {
+        ':email': email,
+      },
+    };
+
+    const result = await docClient.query(params).promise();
+    const user = result.Items && result.Items.length > 0 ? result.Items[0] : undefined;
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid email',
       });
+    }
+
+    // Compare the entered password with the stored hashed password
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid credentials',
+      });
+    }
+
+    // Generate a token
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+    // Set the token as a cookie
+    res.cookie('token', token, {
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === 'development' ? 'lax' : 'none',
+      secure: process.env.NODE_ENV !== 'development',
+    });
+
+    // Respond with the user's data
+    res.status(200).json({
+      success: true,
+      message: 'Logged in successfully',
+      user: { id: user.id, email: user.email, name: user.name },
+      token,
+    });
   } catch (error) {
-      res.status(500).json({
-          success: false,
-          message: error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
-
-
+// Update User Route
 export const UpdateUser = async (req, res) => {
   try {
     const { id } = req.params;
     const { email, name, password } = req.body;
 
     // Fetch the current user from DynamoDB by their ID
-    const currentUser = await updateUserById(id);
+    const currentUserParams = {
+      TableName: 'Users',
+      Key: {
+        id: id,
+      },
+    };
+
+    const currentUserResult = await docClient.get(currentUserParams).promise();
+    const currentUser = currentUserResult.Item;
 
     if (!currentUser) {
       return res.status(404).json('User not found');
@@ -125,7 +173,18 @@ export const UpdateUser = async (req, res) => {
 
     // Check if the email is already in use by another user
     if (email && email !== currentUser.email) {
-      const existingUser = await findUserByEmail(email);
+      const existingUserParams = {
+        TableName: 'Users',
+        IndexName: 'email-index', // GSI for email lookup
+        KeyConditionExpression: 'email = :email',
+        ExpressionAttributeValues: {
+          ':email': email,
+        },
+      };
+
+      const existingUserResult = await docClient.query(existingUserParams).promise();
+      const existingUser = existingUserResult.Items && existingUserResult.Items.length > 0 ? existingUserResult.Items[0] : undefined;
+
       if (existingUser) {
         return res.status(400).json('Email already in use');
       }
@@ -143,17 +202,20 @@ export const UpdateUser = async (req, res) => {
       updatedUser.password = await bcrypt.hash(password, 10);
     }
 
-    // Save the updated user to DynamoDB
-    const result = await updateUserById(id, updatedUser);
+    const updateUserParams = {
+      TableName: 'Users',
+      Item: updatedUser,
+    };
 
-    res.status(200).json(result);
+    await docClient.put(updateUserParams).promise();
+
+    res.status(200).json(updatedUser);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json('Internal Server Error');
+    res.status(500).json('Internal Server Error');
   }
 };
 
-// Corrected GetUser Function
+// Get User Route
 export const GetUser = async (userId) => {
   const params = {
     TableName: 'Users',
@@ -167,11 +229,11 @@ export const GetUser = async (userId) => {
   if (result && result.Item) {
     return result.Item;
   } else {
-    console.log('User not found');
     return null;
   }
 };
 
+// Get All Users Route
 export const GetAllUsers = async (req, res) => {
   try {
     const query = req.query.new;
@@ -195,22 +257,17 @@ export const GetAllUsers = async (req, res) => {
       return res.status(404).json('No users found');
     }
   } catch (error) {
-    console.error(error);
-    return res.status(500).json('Internal Server Error');
+    res.status(500).json('Internal Server Error');
   }
 };
 
-
-
-// Delete User
+// Delete User Route
 export const DeleteUser = async (req, res) => {
   try {
-    // Ensure that req.user is properly set
     if (!req.user || !req.user.id) {
       return res.status(400).json({ message: 'User not authenticated' });
     }
 
-    // Fetch the current user to check permissions
     const paramsGet = {
       TableName: 'Users',
       Key: {
@@ -225,7 +282,6 @@ export const DeleteUser = async (req, res) => {
       return res.status(404).json({ message: 'Current user not found' });
     }
 
-    // Check if the user to be deleted exists
     const paramsGetTarget = {
       TableName: 'Users',
       Key: {
@@ -240,7 +296,6 @@ export const DeleteUser = async (req, res) => {
       return res.status(404).json({ message: 'User to delete not found' });
     }
 
-    // Check if the user is deleting their own account or is an admin
     if (req.params.id === req.user.id || currentUser.isAdmin) {
       const paramsDelete = {
         TableName: 'Users',
@@ -255,11 +310,9 @@ export const DeleteUser = async (req, res) => {
       return res.status(403).json({ message: 'You can delete only your own account or if you are an admin' });
     }
   } catch (error) {
-    console.error('Error deleting user:', error);
-    return res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
 
 // // Logout route
 export const Logout = (req, res) => {

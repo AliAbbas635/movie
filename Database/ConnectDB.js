@@ -20,9 +20,8 @@ AWS.config.update({
 // Create DynamoDB service object
 const dynamoDb = new AWS.DynamoDB();
 const docClient = new AWS.DynamoDB.DocumentClient();
-
 // Function to test connection
-export const connectToDb = async () => {
+export const ConnectDb = async () => {
   try {
     // List tables as a way to test the connection
     const data = await dynamoDb.listTables().promise();

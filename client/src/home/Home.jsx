@@ -28,6 +28,7 @@ export default function Home() {
       <Navbar />
       <Features />
       <List />
+
     </div>
   );
 }

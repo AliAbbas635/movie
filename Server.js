@@ -17,9 +17,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Connecting to database
-ConnectDb();
-app.use(cookieParser());
+ConnectDb();  // This will now correctly call the ConnectDb function
 
+app.use(cookieParser());
 
 // CORS configuration
 const allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];

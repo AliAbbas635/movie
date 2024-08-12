@@ -35,7 +35,12 @@ export default function Register() {
    
   const handleFinish = async (e) => {
     e.preventDefault();
-    await FetchData(name, email, password);
+    if(password.length>= 8){
+      await FetchData(name, email, password);
+    }else{
+      toast.error("Password must be 8 characters")
+    }
+
     if(message){
       toast.error(message);
     }
@@ -86,13 +91,16 @@ export default function Register() {
         ) : (
           <form className="input">
             <input
-              type="password"
+ type="password"
               placeholder="password"
               name="name"
               onChange={(e) => handleChange(e)}
               ref={passwordRef}
               required
-            />
+/>
+
+              
+          
             <button className="registerButton" onClick={(e) => handleFinish(e)}>
               Start
             </button>
