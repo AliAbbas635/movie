@@ -48,14 +48,14 @@ const Navbar = () => {
       <div className="container">
         <div className="left">
           <Link to="/" className="link">
-            <h1 className="logo">XFlix</h1>
+            <h1 className="logo">View Fiesta</h1>
           </Link>
         </div>
 
         {showdashboard && (
           <div className="static">
-            <Link to="/Dashboard" className="link staticlink">
-              Dashboard
+            <Link to="/Dashboard" className="link staticlink" style={{ marginLeft: '50px' }}>
+            Dashboard
             </Link>
           </div>
         )}

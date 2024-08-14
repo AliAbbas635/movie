@@ -56,7 +56,7 @@ export default function Register() {
     <div className="register">
       <div className="top">
         <div className="wrapper">
-         <h1 className="logo">XFlix</h1>
+         <h1 className="logo">View Fiesta</h1>
           <Link to={"/login "} className="link loginButton">
             Sign In
           </Link>
@@ -102,7 +102,7 @@ export default function Register() {
               
           
             <button className="registerButton" onClick={(e) => handleFinish(e)}>
-              Start
+              Sign up
             </button>
           </form>
         )}
