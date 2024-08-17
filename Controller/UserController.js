@@ -153,14 +153,14 @@ export const Login = async (req, res) => {
 // Update User Route
 export const UpdateUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const userId = req.user.id; // Get the user ID from the authenticated request
     const { email, name, password } = req.body;
 
     // Fetch the current user from DynamoDB by their ID
     const currentUserParams = {
       TableName: 'Users',
       Key: {
-        id: id,
+        id: userId,
       },
     };
 
@@ -185,7 +185,7 @@ export const UpdateUser = async (req, res) => {
       const existingUserResult = await docClient.query(existingUserParams).promise();
       const existingUser = existingUserResult.Items && existingUserResult.Items.length > 0 ? existingUserResult.Items[0] : undefined;
 
-      if (existingUser) {
+      if (existingUser && existingUser.id !== userId) {
         return res.status(400).json('Email already in use');
       }
     }
@@ -209,7 +209,7 @@ export const UpdateUser = async (req, res) => {
 
     await docClient.put(updateUserParams).promise();
 
-    res.status(200).json(updatedUser);
+    res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
   } catch (error) {
     res.status(500).json('Internal Server Error');
   }
@@ -314,7 +314,7 @@ export const DeleteUser = async (req, res) => {
   }
 };
 
-// // Logout route
+// Logout Route
 export const Logout = (req, res) => {
   try {
     res
@@ -337,9 +337,7 @@ export const Logout = (req, res) => {
   }
 };
 
-
-
-// //GET USER STATS
+// GET USER STATS
 export const Stats = async (req, res) => {
   const today = new Date();
   const lastYear = new Date(today.setFullYear(today.getFullYear() - 1));
@@ -373,11 +371,11 @@ export const Stats = async (req, res) => {
     res.status(500).json(error);
   }
 };
-//Get My profile.
 
+// Get My Profile
 export const MyProfile = async (req, res) => {
   try {
-    // Fetch the user's ID from the request object (set by isAuth middleware)
+    // Fetch the user's ID from the request object (set by auth middleware)
     const userId = req.user.id;  // Use the ID from the decoded token
 
     // Fetch the user's data from DynamoDB
@@ -400,4 +398,70 @@ export const MyProfile = async (req, res) => {
     return res.status(500).json('Internal Server Error');
   }
 };
+
+// Update My Profile
+export const UpdateMyProfile = async (req, res) => {
+  try {
+    const userId = req.user.id; 
+    const { email, name, password } = req.body;
+
+    // Fetch the current user from DynamoDB by their ID
+    const currentUserParams = {
+      TableName: 'Users',
+      Key: {
+        id: userId,
+      },
+    };
+    const currentUserResult = await docClient.get(currentUserParams).promise();
+    const currentUser = currentUserResult.Item;
+
+    if (!currentUser) {
+      return res.status(404).json({ message: 'User not foundasdf' });
+    }
+
+    // Check if the email is already in use by another user
+    if (email && email !== currentUser.email) {
+      const existingUserParams = {
+        TableName: 'Users',
+        IndexName: 'email-index', // GSI for email lookup
+        KeyConditionExpression: 'email = :email',
+        ExpressionAttributeValues: {
+          ':email': email,
+        },
+      };
+
+      const existingUserResult = await docClient.query(existingUserParams).promise();
+      const existingUser = existingUserResult.Items && existingUserResult.Items.length > 0 ? existingUserResult.Items[0] : undefined;
+
+      if (existingUser && existingUser.id !== userId) {
+        return res.status(400).json({ message: 'Email already in use' });
+      }
+    }
+
+    // Update the user's information
+    const updatedUser = {
+      ...currentUser,
+      email: email || currentUser.email,
+      name: name || currentUser.name,
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (password) {
+      updatedUser.password = await bcrypt.hash(password, 10);
+    }
+
+    const updateUserParams = {
+      TableName: 'Users',
+      Item: updatedUser,
+    };
+
+    await docClient.put(updateUserParams).promise();
+
+    res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
 

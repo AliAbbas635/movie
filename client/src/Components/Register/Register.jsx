@@ -1,11 +1,10 @@
-import { useEffect, useRef } from "react";
-import { useState } from "react";
-import "./Register.css";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { MyContext } from "../../ContextApi/MyContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "./Register.css";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -23,92 +22,86 @@ export default function Register() {
     }
   }, [user, Navigate]);
 
-
   const handleStart = () => {
     setEmail(emailRef.current.value);
     setUsername(usernameRef.current.value);
     if (emailRef.current.value === "" || usernameRef.current.value === "") {
-      toast.error("Username or Email Must not empty");
+      toast.error("Username or Email must not be empty");
     }
-   };
-
-   
-  const handleFinish = async (e) => {
-    e.preventDefault();
-    if(password.length>= 8){
-      await FetchData(name, email, password);
-    }else{
-      toast.error("Password must be 8 characters")
-    }
-
-    if(message){
-      toast.error(message);
-    }
-    console.log(message)
   };
 
-  const handleChange = async (e) => {
+  const handleFinish = async (e) => {
+    e.preventDefault();
+    if (password.length >= 8) {
+      await FetchData(name, email, password);
+    } else {
+      toast.error("Minimum 8 characters are required");
+    }
+
+    if (message) {
+      toast.error(message);
+    }
+  };
+
+  const handleChange = (e) => {
     setPassword(e.target.value);
   };
 
   return (
-      <>
-    <div className="register">
-      <div className="top">
-        <div className="wrapper">
-         <h1 className="logo">View Fiesta</h1>
-          <Link to={"/login "} className="link loginButton">
-            Sign In
-          </Link>
+    <>
+      <div className="register">
+        <div className="top">
+          <div className="wrapper">
+            <h1 className="logo">VIEW FIESTA</h1>
+            <Link to={"/login "} className="link loginButton">
+              Sign In
+            </Link>
+          </div>
+        </div>
+        <div className="container">
+          <h1>Unlimited movies, TV shows, and more.</h1>
+          <h2>Watch anywhere. Cancel anytime.</h2>
+
+          {!email ? (
+            <>
+              <div className="input">
+                <input
+                  type="text"
+                  placeholder="Username"
+                  ref={usernameRef}
+                  required
+                />
+              </div>
+              <div className="input">
+                <input
+                  type="email"
+                  placeholder="email address"
+                  ref={emailRef}
+                  required
+                />
+                <button className="registerButton" onClick={handleStart}>
+                  Get Started
+                </button>
+              </div>
+            </>
+          ) : (
+            <form className="input" onSubmit={handleFinish}>
+              <input
+                type="password"
+                placeholder="Password"
+                name="password"
+                onChange={handleChange}
+                ref={passwordRef}
+                required
+              />
+              <button className="registerButton" type="submit">
+                Sign up
+              </button>
+            </form>
+          )}
         </div>
       </div>
-      <div className="container">
-        <h1>Unlimited movies, TV shows, and more.</h1>
-        <h2>Watch anywhere. Cancel anytime.</h2>
-
-        {!email ? (
-          <>
-            <div className="input">
-              <input
-                type="text"
-                placeholder="Username"
-                ref={usernameRef}
-                required
-              />
-            </div>
-            <div className="input">
-              <input
-                type="email"
-                placeholder="email address"
-                ref={emailRef}
-                required
-              />
-              <button className="registerButton" onClick={handleStart}>
-                Get Started
-              </button>
-            </div>
-          </>
-        ) : (
-          <form className="input">
-            <input
- type="password"
-              placeholder="password"
-              name="name"
-              onChange={(e) => handleChange(e)}
-              ref={passwordRef}
-              required
-/>
-
-              
-          
-            <button className="registerButton" onClick={(e) => handleFinish(e)}>
-              Sign up
-            </button>
-          </form>
-        )}
-      </div>
-    </div>
-<ToastContainer/>
-</>
+      <ToastContainer />
+    </>
   );
 }

@@ -17,7 +17,7 @@ const Navbar = () => {
   const [searchValue, setSearchValue] = useState("");
   const [showdashboard, setshowdashboard] = useState(false);
 
-  const { LogoutUser, user, setUser,SearchMov } = useContext(MyContext);
+  const { LogoutUser, user, setUser,SearchMov, FetchMyData } = useContext(MyContext);
   function Logout() {
     LogoutUser();
     setUser("")
@@ -34,6 +34,7 @@ const Navbar = () => {
   }
 
   useEffect(() => {
+    FetchMyData()
     if (user.isAdmin) {
       setshowdashboard(true);
     }
@@ -85,8 +86,8 @@ const Navbar = () => {
 
           {toggle && (
             <div className="con">
-              <span>Settings</span>
-              <span onClick={Logout}>Logout</span>
+              <Link to="/setting" className="setting">Settings</Link>
+              <span className="setting" onClick={Logout}>Logout</span>
             </div>
           )}
         </div>

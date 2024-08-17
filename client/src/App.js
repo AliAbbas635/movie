@@ -13,6 +13,7 @@ import { MyContext } from "./ContextApi/MyContext";
 import { useContext } from "react";
 import UploadMovie from "./AdminPage/uploadMovie";
 import Dashboard from "./AdminPage/Dashboard";
+import Setting from "./Components/Settings/Setting.jsx";
 import "./App.css";
 
 import User from "./AdminPage/AdminComponents/User.jsx"
@@ -45,6 +46,8 @@ const App = () => {
         <Route path="/user" element={<User />} />
 
         <Route path="/moviedetails" element={<Moviesdetail />} />
+
+        <Route path="/setting" element={<Setting />} />
 
         <Route path="/search" element={<Search />} />
 
