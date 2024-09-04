@@ -62,16 +62,23 @@ const Moviesdetail = () => {
       <ToastContainer /> {/* Toast Container to show notifications */}
       {user && user.isAdmin ? (
         <>
-          <h1 style={{ margin: "1rem" }}>All Movies List</h1>
-          <div>
-            <Link className="dashboardbtn" to={"/dashboard"}>
-              Dashboard
-            </Link>
-          </div>
-          <div>
-            <Link className="dashboardbtn btnleft" to={"/upload"}>
-              Add New Movie
-            </Link>
+          <div className="maincon">
+            <div className="headingcon">
+
+              <h1 className="hcon" style={{ margin: "1rem" }}>All Movies List</h1>
+            </div>
+            <div className="buttoncon">
+              <div>
+                <Link className="dashboardbtn btnleft leftbtn" to={"/dashboard"}>
+                  Dashboard
+                </Link>
+              </div>
+              <div>
+                <Link className="dashboardbtn rightbtn" to={"/upload"}>
+                  Add New Movie
+                </Link>
+              </div>
+            </div>
           </div>
           <table className="movie-table">
             <thead>
@@ -91,8 +98,8 @@ const Moviesdetail = () => {
                   <td>{movie.genre}</td>
                   <td>{movie.limit}</td>
                   <td>
-                    <button 
-                      onClick={() => onDelete(movie.id)} 
+                    <button
+                      onClick={() => onDelete(movie.id)}
                       disabled={deleting === movie.id} // Disable button if deleting
                     >
                       {deleting === movie.id ? "Deleting..." : "Delete"}

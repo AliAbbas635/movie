@@ -5,6 +5,7 @@ import axios from "axios";
 import BaseURL from "../../BaseURL";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Link } from "react-router-dom";
 
 function Setting() {
   const { user, setUser, FetchMyData } = useContext(MyContext);
@@ -111,6 +112,10 @@ function Setting() {
         <button type="submit" disabled={loading}>
           {loading ? "Updating..." : "Save Changes"}
         </button>
+
+        <div className="back">
+          <Link to={"/"}>Back To Home</Link>
+        </div>
       </form>
       <ToastContainer />
     </div>

@@ -1,5 +1,5 @@
-
-.Navbar{
+/* Base Navbar Styling */
+.Navbar {
     color: white;
     font-family: 'Roboto', sans-serif;
     top: 0;
@@ -9,124 +9,212 @@
     font-size: 14px;
     position: fixed;
     width: 100%;
-}
-
-.container{
+  }
+  
+  /* Container Flexbox */
+  .container {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 70px;
-}
-
-.left{
+    padding: 0 20px;
+  }
+  
+  /* Left Section */
+  .left {
     display: flex;
     align-items: center;
-    background: none;
-}
-
-.left > span{
+  }
+  
+  .left > span {
     padding: 0px 5px;
     cursor: pointer;
-    background: none;
-}
-
-.logo{
+  }
+  
+  .logo {
     height: 40px;
     padding-right: 4px;
     cursor: pointer;
-    background: none;
     color: red;
     font-weight: 700;
     margin-left: 1rem;
-}
-
-.right{
-    color: white;
+  }
+  
+  /* Right Section */
+  .right {
     display: flex;
     align-items: center;
-    background: none;
-}
-
-.right > img{
+  }
+  
+  .right > img {
     width: 30px;
     height: 30px;
     border-radius: 10px;
     cursor: pointer;
-    padding: px 15px;
-    background: none;
-}
-
-.Navicon{
+    padding: 0 15px;
+  }
+  
+  .Navicon {
     padding: 5px 11px;
     cursor: pointer;
-    background: none;
-}   
-
-
-
-.con {
+    font-size: large;
+    margin-right: 1rem;
+  }
+  
+  /* Dropdown/Settings Container */
+  .con {
     display: flex;
     flex-direction: column;
     right: 1rem;
     top: 3rem;
     position: absolute;
     border: 1px solid white;
-    border-radius:4px;
-}
-
-.con > span .setting{
+    border-radius: 4px;
+  }
+  
+  .con > span .setting {
     padding: 10px;
     cursor: pointer;
-    background: none;
     font-size: medium;
-}
-
-.setting{
+  }
+  
+  .setting {
     color: white;
     cursor: pointer;
     font-size: medium;
-    
-}
-
-.con > span:hover{
-    background-color: rgba(0,0,0,0.3);
-}
-
-.Scrolled{
+  }
+  
+  .con > span:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+  
+  .Scrolled {
     background-color: black;
-}
-
-.static{
+  }
+  
+  /* Static Dashboard Link */
+  .static {
     position: absolute;
     top: 35%;
     left: 10%;
-}
-
-.staticlink{
+  }
+  
+  .staticlink {
     font-size: large;
-}
-
-.search{
-    background-color: rgba(0,0,0,0.3);
+  }
+  
+  /* Search Box */
+  .search {
+    background-color: rgba(0, 0, 0, 0.3);
     outline: none;
     border: 1px solid white;
     padding: 8px;
     border-radius: 5px;
     color: white;
-
-}
-
-.Navicon{
-    font-size: large;
-    margin-right: 1rem;
-}
-
-
-.Navuser{
+  }
+  
+  /* User Icon */
+  .Navuser {
     font-size: x-large;
     background-color: rgb(0, 0, 0);
     border-radius: 50%;
     padding: 0.8rem;
     margin-right: 1.5rem;
     cursor: pointer;
-}
+  }
+  
+  /* Responsive Styling */
+  
+  /* Medium devices (tablets, 768px and up) */
+  @media screen and (max-width: 1024px) {
+    .container {
+      padding: 0 15px;
+    }
+  
+    .logo {
+      height: 35px;
+      margin-left: 0.5rem;
+    }
+  
+    .right > img {
+      width: 25px;
+      height: 25px;
+    }
+  
+    .Navicon {
+      margin-right: 0.5rem;
+    }
+  
+    .search {
+      width: 150px;
+    }
+  }
+  
+  /* Small devices (phones, 600px and up) */
+  @media screen and (max-width: 768px) {
+    .container {
+      flex-direction: column;
+      justify-content: center;
+      height: auto;
+      padding: 10px 15px;
+    }
+  
+    .static {
+      display: none;
+    }
+  
+    .con {
+      width: 100%;
+      left: 0;
+      right: 0;
+      top: 100%;
+      text-align: center;
+      border-radius: 0;
+    }
+  
+    .search {
+      width: 120px;
+      margin-top: 10px;
+    }
+  
+    .Navicon, .Navuser {
+      margin-top: 10px;
+    }
+  }
+  
+  /* Extra Small devices (phones, less than 600px) */
+  @media screen and (max-width: 576px) {
+    .container {
+      padding: 10px;
+    }
+  
+    .logo {
+      height: 30px;
+      margin-left: 0;
+    }
+  
+    .search {
+      width: 100%;
+      margin-top: 10px;
+    }
+  
+    .Navicon {
+      margin-right: 0;
+    }
+  
+    .Navuser {
+      padding: 0.5rem;
+      margin-right: 1rem;
+    }
+/*   
+    .con {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      top: auto;
+      border-radius: 0;
+      z-index: 100;
+    } */
+  }
+  

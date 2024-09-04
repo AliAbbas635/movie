@@ -1,49 +1,116 @@
-.list{
-    width: 100%;
-    margin-top: 10px;
-    overflow: hidden;
+.list {
+  width: 100%;
+  margin-top: 10px;
+  position: relative; /* Ensure the arrows are positioned relative to this */
 }
 
-
-
-.listTitle{
-    color: white;
-    font-size: 20px;
-    font-size: 500;
-    margin-left: 40px;
+.listTitle {
+  color: white;
+  font-size: 20px;
+  font-weight: 500;
+  margin-left: 40px;
 }
 
-.listcontainer{
-margin-left: 20px;
-display: flex;
-align-items: center;
-width: max-content;
-margin-top: 10px;
-transform: translateX(0px);
-transition: all 1s ease;
-overflow: hidden;
+.wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
 }
 
-.slidarrow{
-    color: white;
-    width: 25px;
-    height: 100%;
-    background-color: rgb(37, 37, 37 , 0.5);
-    position: absolute;
-    z-index: 99;
-    cursor: pointer;
-    padding: 8px;
+.listContainer {
+  display: flex;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  scroll-behavior: smooth; /* Smooth scrolling effect */
+  width: 100%;
 }
 
-.wrapper{
-    position: relative;
+.listContainer::-webkit-scrollbar {
+  display: none; /* Hide the scrollbar */
 }
 
-.left{
-    left: 0%;
+.listItemsContainer > * {
+  flex: 0 0 230px; /* Adjust the size of each item */
+  margin-right: 10px; /* Optional spacing between items */
 }
 
-.right{
-    top: 0%;
-    right: 0%;
+.slidarrow {
+  color: white;
+  width: 50px;
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 99;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.left {
+  left: 10px;
+}
+
+.right {
+  right: 10px;
+}
+
+/* Responsive adjustments */
+
+/* Medium devices (tablets, 768px and up) */
+@media screen and (max-width: 1024px) {
+  .listItemsContainer > * {
+    flex: 0 0 200px; /* Adjust the size of each item for medium screens */
+  }
+
+  .slidarrow {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Small devices (phones, 600px and up) */
+@media screen and (max-width: 768px) {
+  .listTitle {
+    font-size: 18px; /* Adjust title font size for small screens */
+    margin-left: 20px;
+  }
+
+  .listItemsContainer > * {
+    flex: 0 0 150px; /* Smaller items for mobile screens */
+  }
+
+  .slidarrow {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+/* Extra small devices (phones, less than 600px) */
+@media screen and (max-width: 576px) {
+  .listTitle {
+    font-size: 16px; /* Further reduce title font size */
+    margin-left: 15px;
+  }
+
+  .listItemsContainer > * {
+    flex: 0 0 120px; /* Even smaller items for extra small screens */
+  }
+
+  .slidarrow {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* Adjust arrow position for mobile screens */
+  .left {
+    left: 5px;
+  }
+
+  .right {
+    right: 5px;
+  }
 }

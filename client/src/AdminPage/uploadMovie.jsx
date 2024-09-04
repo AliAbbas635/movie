@@ -42,6 +42,7 @@ const UploadMovie = () => {
 
   const handleUpload = async () => {
     setUploading(true);
+    const token = localStorage.getItem('token');
     try {
       if (!file || !title || !description || !genre || !limit) {
         setError("Please fill in all fields");
@@ -49,17 +50,19 @@ const UploadMovie = () => {
       }
 
       const formData = new FormData();
-      formData.append("video", file);
-      formData.append("image", image);
+      formData.append("video", file);   // video file
+      formData.append("image", image);  // image file
       formData.append("title", title);
       formData.append("desc", description);
       formData.append("genre", genre);
       formData.append("limit", limit);
       formData.append("isSeries", isSeries);
 
+
       const response = await axios.post(`${BaseURL}/movie/upload`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
         },
       });
 

@@ -15,7 +15,11 @@ router.get("/find", isAuth, SearchMovie);
 router.get("/random", RandomMovie);
 router.get("/random50", RandomFiftyMovie);
 router.get("/", isAuth, AllMovies);
-router.post("/upload", isAuth, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'video', maxCount: 1 }]), UploadMovie);
+router.post("/upload", isAuth, upload.fields([
+    { name: 'image', maxCount: 1 }, 
+    { name: 'video', maxCount: 1 }
+  ]), UploadMovie);
+  
 router.get("/stat", isAuth, MovieStats);  
 
 export default router;

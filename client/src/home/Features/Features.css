@@ -22,13 +22,13 @@
   position: absolute;
   top: 45%;
   left: 50%;
-  z-index: 10000;background-color: black;
+  z-index: 10000;
+  background-color: black;
   transform: translate(-50%, -50%);
 }
 
-.close{
+.close {
   cursor: pointer;
-  
 }
 
 .infocon {
@@ -105,8 +105,6 @@
   top: -30%;
 }
 
-
-
 /* Styling for Movie Name */
 .movie-name {
   margin-bottom: 15px;
@@ -138,7 +136,7 @@
 
 .genre-value {
   font-weight: bold;
-  color: #007bff; /* Change color as desired */
+  color: #007bff;
 }
 
 /* Styling for Rating */
@@ -150,5 +148,80 @@
 
 .rating-value {
   font-weight: bold;
-  color: #28a745; /* Change color as desired */
+  color: #28a745;
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 1200px) {
+  .info {
+    width: 50%;
+    top: 50%;
+  }
+
+  .infocon {
+    max-width: 40rem;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .info {
+    width: 60%;
+    top: 55%;
+  }
+
+  .infocon {
+    max-width: 35rem;
+  }
+
+  .imgtitle {
+    font-size: 40px;
+    top: -25%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .info {
+    width: 70%;
+    top: 60%;
+  }
+
+  .infocon {
+    max-width: 30rem;
+  }
+
+  .imgtitle {
+    font-size: 35px;
+    top: -20%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .info {
+    width: 80%;
+    top: 65%;
+  }
+
+  .infocon {
+    max-width: 25rem;
+    padding: 0.8rem;
+  }
+
+  .btn {
+    width: 6rem;
+    font-size: medium;
+  }
+
+  .imgtitle {
+    font-size: 30px;
+    top: -15%;
+  }
+
+  .dropdown {
+    left: 3%;
+    top: 10%;
+  }
+
+  .dropdownselect {
+    font-size: small;
+  }
 }

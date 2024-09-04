@@ -46,7 +46,7 @@ const upload = multer({ storage: storage });
 app.use('/user', UserRouter);
 app.use('/movie', MovieRouter);
 
-// Serve frontend in production
+// In production mode, serve the React app's build files
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'client', 'build')));
 

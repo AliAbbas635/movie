@@ -84,7 +84,7 @@ const User = () => {
             <th>Name</th>
             <th>Email</th>
             <th>IsAdmin</th>
-            <th>User Created At</th>
+            <th className="created-at">User Created At</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -94,7 +94,7 @@ const User = () => {
               <td>{user.name}</td>
               <td>{user.email}</td>
               <td>{user.isAdmin ? "Yes" : "No"}</td>
-              <td>{new Date(user.createdAt).toLocaleString()}</td>
+              <td className="created-at">{new Date(user.createdAt).toLocaleString()}</td>
               <td>
                 <button 
                   onClick={() => onDelete(user.id)} 

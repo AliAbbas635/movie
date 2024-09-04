@@ -105,12 +105,23 @@ function MyProvider({ children }) {
     try {
       localStorage.removeItem('token');
       document.cookie = `token=; path=/; max-age=0; secure=${process.env.NODE_ENV !== 'development'}; samesite=lax`;
-      await axios.post(`${BaseURL}/user/logout`, {}, { withCredentials: true });
-      setUser(null);
+  
+      const response = await axios.post(`${BaseURL}/user/logout`, {}, { withCredentials: true });
+      
+      if (response.status === 200) {
+        setUser(null);
+        window.location.href = "/login"; // Redirect immediately after logout
+      } else {
+        console.error("Logout failed, server did not return 200");
+      }
     } catch (error) {
       console.error("An error occurred during logout:", error.message);
+      // Handle the error by clearing the user state to ensure the UI updates correctly
+      setUser(null);
+      window.location.href = "/login"; // Redirect to login page even if the server-side logout fails
     }
   }
+  
 
   // //***************** Movie *********************
   

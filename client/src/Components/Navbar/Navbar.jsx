@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "./Navbar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faBurger, faBars} from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
@@ -15,35 +15,34 @@ const Navbar = () => {
   const [toggle, settoggle] = useState(false);
   const [isScrol, setisScrol] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [showdashboard, setshowdashboard] = useState(false);
+  const { LogoutUser, user, setUser, SearchMov, FetchMyData } = useContext(MyContext);
 
-  const { LogoutUser, user, setUser,SearchMov, FetchMyData } = useContext(MyContext);
   function Logout() {
     LogoutUser();
-    setUser("")
+    setUser("");
     Navigate("/login");
   }
 
-   function SearchMovie() {
-    if(searchValue.length >2){
+  function SearchMovie() {
+    if (searchValue.length > 2) {
       SearchMov(searchValue);
       Navigate("/search");
-    }else{
-      toast.error("Please insert that you want to searchc")
+    } else {
+      toast.error("Please insert what you want to search");
     }
   }
 
   useEffect(() => {
-    FetchMyData()
-    if (user.isAdmin) {
-      setshowdashboard(true);
+    if (!user) {
+      FetchMyData();
     }
-  }, [user]);
+  }, []);
 
   window.onscroll = () => {
     setisScrol(window.pageYOffset === 0 ? false : true);
     return () => (window.onscroll = null);
   };
+
   return (
     <div className={isScrol ? "Navbar Scrolled" : "Navbar"}>
       <div className="container">
@@ -52,14 +51,6 @@ const Navbar = () => {
             <h1 className="logo">View Fiesta</h1>
           </Link>
         </div>
-
-        {showdashboard && (
-          <div className="static">
-            <Link to="/Dashboard" className="link staticlink" style={{ marginLeft: '50px' }}>
-            Dashboard
-            </Link>
-          </div>
-        )}
 
         <div className="right">
           <input
@@ -79,20 +70,29 @@ const Navbar = () => {
 
           <FontAwesomeIcon
             onClick={() => settoggle(!toggle)}
-            icon={faUser}
+            icon={faBars}
             className="Navuser"
             onBlur={() => settoggle(false)}
           />
 
           {toggle && (
             <div className="con">
-              <Link to="/setting" className="setting">Settings</Link>
-              <span className="setting" onClick={Logout}>Logout</span>
+              {user && user.isAdmin && (
+                <Link to="/Dashboard" className="setting">
+                  Dashboard
+                </Link>
+              )}
+              <Link to="/setting" className="setting">
+                Settings
+              </Link>
+              <span className="setting" onClick={Logout}>
+                Logout
+              </span>
             </div>
           )}
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 };

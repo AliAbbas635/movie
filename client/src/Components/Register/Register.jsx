@@ -23,11 +23,21 @@ export default function Register() {
   }, [user, Navigate]);
 
   const handleStart = () => {
-    setEmail(emailRef.current.value);
-    setUsername(usernameRef.current.value);
-    if (emailRef.current.value === "" || usernameRef.current.value === "") {
+    const emailValue = emailRef.current.value;
+    const usernameValue = usernameRef.current.value;
+
+    if (!emailValue || !usernameValue) {
       toast.error("Username or Email must not be empty");
+      return;
     }
+
+    if (!emailValue.endsWith("@gmail.com")) {
+      toast.error("Please enter a valid Gmail address ending with '@gmail.com'");
+      return;
+    }
+
+    setEmail(emailValue);
+    setUsername(usernameValue);
   };
 
   const handleFinish = async (e) => {

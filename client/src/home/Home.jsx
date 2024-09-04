@@ -12,16 +12,28 @@ export default function Home() {
 
   const Navigate = useNavigate();
 
-  const { user,fetchRandomMovie,fetchRandomFifty,AllMovie } = useContext(MyContext);
+  const {FetchMyData, user, fetchRandomMovie, fetchRandomFifty, AllMovie } = useContext(MyContext);
+
 
   useEffect(() => {
-  fetchRandomMovie();
-  fetchRandomFifty();
-   AllMovie();
+    fetchRandomMovie();
+    fetchRandomFifty();
+    AllMovie();
+    const intervalId = setInterval(() => {
+      fetchRandomMovie();
+    }, 5000); 
+  
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
+  },  [])
+
+
+  useEffect(() => {
+    FetchMyData();
     if (!user) {
-      Navigate("/login");
+      Navigate("/login", { replace: true }); 
     }
-  }, [user]);
+  }, [Navigate]);
 
   return (
     <div>

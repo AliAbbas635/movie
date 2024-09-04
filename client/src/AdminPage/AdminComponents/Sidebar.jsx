@@ -19,7 +19,7 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
   return (
     <aside id="sidebar" className={openSidebarToggle ? "sidebar-responsive" : ""}>
       <div className='sidebar-title'>
-        <div className='sidebar-brand'>XFlix</div>
+        <div className='sidebar-brand'>VIEW FIESTA</div>
         <span className='icon close_icon' onClick={OpenSidebar}>X</span>
       </div>
 
