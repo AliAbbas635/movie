@@ -112,7 +112,7 @@ const deleteFileFromS3 = async (key) => {
 };
 
 
-// GET - Search for movies by title (case-insensitive)
+// GET - Search for movies by title
 export const SearchMovie = async (req, res) => {
   const { title } = req.query;
 
@@ -121,18 +121,15 @@ export const SearchMovie = async (req, res) => {
       return res.status(400).json({ message: 'Title query parameter is required' });
     }
 
-    // Convert the title query to lowercase for case-insensitive comparison
-    const lowerCaseTitle = title.toLowerCase();
-
     // Define the parameters for the scan operation
     const params = {
       TableName: process.env.DYNAMODB_TABLE_NAME,
-      FilterExpression: 'contains(#lowercaseTitle, :title)',
+      FilterExpression: 'contains(#title, :title)',
       ExpressionAttributeNames: {
-        '#lowercaseTitle': 'lowercaseTitle', // Alias to avoid reserved word issues
+        '#title': 'title', // DynamoDB reserved word, so aliasing it with '#title'
       },
       ExpressionAttributeValues: {
-        ':title': lowerCaseTitle, // The lowercase value to search for
+        ':title': title, // The value to search for
       },
     };
 
@@ -150,7 +147,6 @@ export const SearchMovie = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
 
 // GET RANDOM Movie
 export const RandomMovie = async (req, res) => {
@@ -277,15 +273,12 @@ export const UploadMovie = async (req, res) => {
     const imageFileName = `${movieId}-${req.files.image[0].originalname}`;
     const imageUrl = await uploadFileToS3(imageFile, imageFileName, req.files.image[0].mimetype);
 
-    // Convert title to lowercase before storing in the database
-    const lowerCaseTitle = title.toLowerCase();
-
     // Prepare movie data for DynamoDB
     const movieData = {
       TableName: process.env.DYNAMODB_TABLE_NAME,
       Item: {
         id: movieId,
-        title: lowerCaseTitle,  // Store the title in lowercase
+        title: title,
         desc: desc,
         genre: genre,
         image: imageUrl,
