@@ -15,31 +15,23 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-//fixing 
 
 // Connecting to database
 ConnectDb();  // This will now correctly call the ConnectDb function
 
 app.use(cookieParser());
 
-// CORS configuration
-const allowedOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
-
+// CORS configuration to allow every origin
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
+  origin: '*',  // Allows all origins
+  credentials: true,  // Include credentials like cookies if needed
 };
 
-app.use(cors(corsOptions)); // Use cors middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cors(corsOptions)); // Use CORS middleware
+app.use(express.json()); // Parse incoming JSON
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded data
 
+// File upload handling with multer
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -61,7 +53,7 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-// Listening
+// Listening on the port specified in the environment variables or default to 5000
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT} in ${process.env.NODE_ENV} mode`);
