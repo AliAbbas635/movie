@@ -94,3 +94,64 @@
 .loginButton{
   cursor: pointer;
 }
+
+/* Media queries for mobile responsiveness */
+@media (max-width: 768px) {
+  .register .container h1 {
+    font-size: 35px;
+  }
+
+  .register .container p {
+    font-size: 18px;
+  }
+
+  .register .container .input {
+    width: 70%;
+    height: 45px;
+  }
+
+  .register .container .input .registerButton {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .register .top .wrapper {
+    padding: 10px 20px;
+  }
+
+  .register .top .wrapper .logo {
+    height: 30px;
+  }
+
+  .register .top .wrapper .loginButton {
+    padding: 5px 10px;
+    font-size: 14px;
+  }
+
+  .register .container h1 {
+    font-size: 30px;
+  }
+
+  .register .container h2 {
+    font-size: 16px;
+    margin: 10px;
+  }
+
+  .register .container p {
+    font-size: 16px;
+  }
+
+  .register .container .input {
+    width: 80%;
+    height: 40px;
+  }
+
+  .registerButton{
+    font-size: small !important;
+  }
+
+  .register .container .input .registerButton {
+    font-size: 16px;
+  }
+}

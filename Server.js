@@ -21,10 +21,17 @@ ConnectDb();  // This will now correctly call the ConnectDb function
 
 app.use(cookieParser());
 
-// CORS configuration to allow every origin
+// CORS configuration to allow specific origins (no wildcard when credentials are used)
+const allowedOrigins = ['http://localhost:3000', 'http://18.212.30.69:5001']; // Replace with your frontend domains
 const corsOptions = {
-  origin: '*',  // Allows all origins
-  credentials: true,  // Include credentials like cookies if needed
+  origin: function (origin, callback) {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,  // Allow credentials (cookies, authorization headers)
 };
 
 app.use(cors(corsOptions)); // Use CORS middleware

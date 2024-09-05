@@ -19,12 +19,10 @@ const Features = () => {
   }
 
   function handleinfo() {
-    console.log("clik");
-    setshowinfo(true);
+    setshowinfo(!showinfo);
   }
 
   function handleinfoblur() {
-    console.log("blur");
     setshowinfo(false);
   }
 

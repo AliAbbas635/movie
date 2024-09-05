@@ -37,9 +37,8 @@
 
 .videop, .videoimg {
   width: 100%;
-  height: 25rem;
-  margin-top: 4.5rem;
 }
+
 
 .movieinfo {
   color: white;
@@ -154,6 +153,11 @@
   .titlemov {
     font-size: 30px;
   }
+
+  .mymodal{
+  width: 90%;
+  }
+  
 
   .videop, .videoimg {
     height: 15rem;

@@ -43,6 +43,7 @@ const ListItem = ({ mov }) => {
           />
           <h1 className="ImgTitle">{mov.title}</h1>
           <Modal
+
             isOpen={isModalOpen}
             onRequestClose={() => setIsModalOpen(false)}
             style={{
@@ -57,8 +58,8 @@ const ListItem = ({ mov }) => {
                 bottom: "auto",
                 marginRight: "-50%",
                 transform: "translate(-50%, -50%)",
-                height: "100%",
-                width: "60%",
+                height: "50%",
+                width: "50%",
                 zIndex: 1111,
               },
             }}
