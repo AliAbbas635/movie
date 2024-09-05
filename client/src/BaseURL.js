@@ -1,5 +1,5 @@
 
-const BaseURL="http://52.91.189.58:5001"
+const BaseURL="http://18.212.30.69:5001"
 
 // const BaseURL= "http://localhost:5001" 
 
