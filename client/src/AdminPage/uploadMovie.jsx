@@ -139,14 +139,14 @@ const UploadMovie = () => {
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="upload-input margin"
+            className="upload-input "
           />
 
           <select
             id="genre"
             value={genre}
             onChange={(e) => setGenre(e.target.value)}
-            className="upload-input margin"
+            className="upload-input"
           >
             <option value="">Select a Genre</option>
             {genres.map((genre, index) => (

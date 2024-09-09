@@ -225,7 +225,6 @@ export const RandomFiftyMovie = async (req, res) => {
 export const AllMovies = async (req, res) => {
   try {
     const userId = req.user.id;
-    console.log(userId);
 
     const userParams = {
       TableName: 'Users', 
@@ -253,8 +252,6 @@ export const AllMovies = async (req, res) => {
 // UPLOAD MOVIE
 export const UploadMovie = async (req, res) => {
   try {
-    console.log('Files:', req.files);  
-    console.log('Body:', req.body);    
     if (!req.files) {
       console.log('No file uploaded');
       return res.status(400).send('No file uploaded');
